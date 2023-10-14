@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView} from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../actions';
 import { Ionicons } from '@expo/vector-icons'; // Remember to install this package
@@ -48,8 +48,9 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-  
-      <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
+
+      {/* 1. Top Section: Sides Input */}
+      <View style={styles.topSection}>
         {sides.map((side, index) => (
           <View key={index} style={styles.sideContainer}>
             <TextInput
@@ -63,17 +64,26 @@ export default function CreateFlashcardScreen({ route, navigation }) {
             )}
           </View>
         ))}
-        { sides.length < 4 && (
-            <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
-                <Ionicons name="add-circle-outline" size={24} color="blue" />
-            </TouchableOpacity>
+        {sides.length < 4 && (
+          <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
+            <Ionicons name="add-circle-outline" size={24} color="blue" />
+          </TouchableOpacity>
         )}
-      </ScrollView>
-  
-      <View style={styles.footer}>
+      </View>
+
+      {/* 2. Middle Section: Card Overlay */}
+      <View style={styles.middleSection}>
+        <TouchableOpacity style={styles.card}>
+          <Text>{sides[editingSide]}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 3. Bottom Section: Footer buttons */}
+      <View style={styles.bottomSection}>
         <Button title="Start Studying" onPress={handleStartStudying} />
         <Button title="Add Flash Card" onPress={handleAddCard} />
       </View>
+
     </View>
   );
 }
@@ -82,27 +92,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'space-between',
   },
-  scrollViewContainer: {
-    height: '65%', // rough estimate to show 4 rows, adjust as needed
+
+  // 1. Top Section: Sides Input
+  topSection: {
+    height: 250, // FIXME. shouldnt be hardcoded
   },
   sideContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,  // reduced padding between rows
+    marginBottom: 15,
     width: '100%',
   },
   input: {
     flex: 1,
-    padding: 5, // reduced padding to make input smaller
-    fontSize: 14,  // reduced font size
+    padding: 10,
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 5,
   },
   inputWithTab: {
-    marginRight: 8, 
+    marginRight: 8,
   },
   deleteTab: {
     width: 8,
@@ -118,9 +128,32 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 15,
   },
-  footer: {
+
+  // 2. Middle Section: Card Overlay
+  middleSection: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: '100%',
+    height: 300,
+    backgroundColor: '#f7f7f7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+
+  // 3. Bottom Section: Footer buttons
+  bottomSection: {
+    height: 60, // Approximate height for buttons
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,  // clearance at the bottom
+    marginBottom: 20,
   },
 });
