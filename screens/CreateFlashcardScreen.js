@@ -35,7 +35,7 @@ function CreateFlashcardScreen({ route, navigation }) {
       />
       <Button title="Add Flashcard" onPress={handleSubmit} />
       {deck && deck.questions.length > 0 && 
-        <Button title="Start Studying" onPress={() => navigation.navigate('DeckBrowser')} />
+        <Button title="Start Studying" onPress={() => navigation.navigate('Home')} />
       }
     </View>
   );
