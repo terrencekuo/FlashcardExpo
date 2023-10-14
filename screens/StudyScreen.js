@@ -1,83 +1,72 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectDeckByName } from '../selectors/deckSelectors';
 
 function StudyScreen({ route, navigation }) {
-    const { deckName } = route.params;
-    const deck = useSelector(state => selectDeckByName(state, deckName));
-    const [cardIndex, setCardIndex] = useState(0);
-    const [showFront, setShowFront] = useState(true);
+  const { deckName } = route.params;
+  const deck = useSelector((state) => selectDeckByName(state, deckName));
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showSide, setShowSide] = useState(0); // Index of the side to show
 
-    if (!deck || !deck.questions.length) {
-        return (
-            <View style={styles.centered}>
-                <Text>No cards available in this deck!</Text>
-            </View>
-        );
+  if (!deck) {
+    return <Text>Deck not found!</Text>;
+  }
+
+  const { questions } = deck;
+  const currentCard = questions[currentCardIndex];
+
+  const handleFlipCard = () => {
+    const nextSide = (showSide + 1) % currentCard.sides.length;
+    setShowSide(nextSide);
+  };
+
+  const handleNextCard = () => {
+    if (currentCardIndex < questions.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+      setShowSide(0);
+    } else {
+      navigation.navigate('Home');
     }
+  };
 
-    const card = deck.questions[cardIndex];
-
-    const flipCard = () => {
-        setShowFront(!showFront);
-    };
-
-    const nextCard = () => {
-        if (cardIndex < deck.questions.length - 1) {
-            setCardIndex(cardIndex + 1);
-            setShowFront(true); // Reset to showing the front of the next card.
-        } else {
-            navigation.goBack();
-        }
-    };
-
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.card} onPress={flipCard}>
-                <Text style={styles.cardText}>{showFront ? card.front : card.back}</Text>
-            </TouchableOpacity>
-            <View style={styles.buttonContainer}>
-                <Button title="Next Card" onPress={nextCard} />
-            </View>
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.card} onPress={handleFlipCard}>
+        <Text>{currentCard.sides[showSide]}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleNextCard}>
+        <Text>Next Card</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        backgroundColor: '#f4f4f4',
-    },
-    centered: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    card: {
-        width: '100%',
-        height: 300,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        elevation: 10, // For Android shadow
-        shadowColor: '#000', // For iOS shadow
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    cardText: {
-        fontSize: 24,
-    },
-    buttonContainer: {
-        position: 'absolute',
-        bottom: 40,
-        width: '90%',
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  card: {
+    width: '100%',
+    height: 300,
+    backgroundColor: '#f7f7f7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: 'lightblue',
+    borderRadius: 5,
+  },
 });
 
 export default StudyScreen;

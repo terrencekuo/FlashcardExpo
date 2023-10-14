@@ -1,44 +1,91 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { addCardToDeck } from '../actions/index';
-import { selectDeckByName } from '../selectors/deckSelectors';
+import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { addCardToDeck } from '../actions';
+import { Ionicons } from '@expo/vector-icons'; // Remember to install this package
 
-
-function CreateFlashcardScreen({ route, navigation }) {
-  const [front, setFront] = useState('');
-  const [back, setBack] = useState('');
+export default function CreateFlashcardScreen({ route, navigation }) {
+  const { deckName } = route.params;
   const dispatch = useDispatch();
 
-  const deckName = route.params.deckName;
-  const deck = useSelector(state => selectDeckByName(state, deckName));
+  const [sides, setSides] = useState(['', '']);
 
-  const handleSubmit = () => {
-    dispatch(addCardToDeck(route.params.deckName, { front, back }));
-    setFront('');
-    setBack('');
+  const handleAddSide = () => {
+    setSides(prevSides => [...prevSides, '']);
+  };
+
+  const handleRemoveSide = (indexToRemove) => {
+    setSides(prevSides => prevSides.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleSideChange = (text, index) => {
+    const newSides = [...sides];
+    newSides[index] = text;
+    setSides(newSides);
+  };
+
+  const handleAddCard = () => {
+    if (sides.some(side => side.trim() === '')) {
+      alert('Please fill out all sides!');
+      return;
+    }
+
+    dispatch(addCardToDeck(deckName, { sides }));
+    setSides(['', '']); // Reset after adding
+  };
+
+  const handleStartStudying = () => {
+    navigation.navigate('Home'); // Navigate back to home page
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TextInput
-        style={{ borderWidth: 1, padding: 10, width: '80%', marginBottom: 20 }}
-        placeholder="Enter front"
-        value={front}
-        onChangeText={setFront}
-      />
-      <TextInput
-        style={{ borderWidth: 1, padding: 10, width: '80%', marginBottom: 20 }}
-        placeholder="Enter back"
-        value={back}
-        onChangeText={setBack}
-      />
-      <Button title="Add Flashcard" onPress={handleSubmit} />
-      {deck && deck.questions.length > 0 && 
-        <Button title="Start Studying" onPress={() => navigation.navigate('Home')} />
-      }
+    <View style={styles.container}>
+      {sides.map((side, index) => (
+        <View key={index} style={styles.sideContainer}>
+          <TextInput
+            style={styles.input}
+            value={side}
+            onChangeText={(text) => handleSideChange(text, index)}
+            placeholder={`Side ${index + 1}`}
+          />
+          {index > 1 && <Button title="Remove" onPress={() => handleRemoveSide(index)} />}
+        </View>
+      ))}
+
+      {sides[sides.length - 1].trim() !== '' && (
+        <TouchableOpacity onPress={handleAddSide} style={styles.iconButton}>
+          <Ionicons name="add-circle-outline" size={32} color="blue" />
+        </TouchableOpacity>
+      )}
+
+      <Button title="Add Flash Card" onPress={handleAddCard} />
+      <Button title="Start Studying" onPress={handleStartStudying} />
     </View>
   );
 }
 
-export default CreateFlashcardScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sideContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    width: '100%',
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  iconButton: {
+    marginBottom: 20,
+  },
+});
