@@ -54,51 +54,55 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     };
 
     return (
-        <KeyboardAwareScrollView style={styles.container}>
+      <KeyboardAwareScrollView style={styles.container}>
 
-            {/* Sides Input Rows */}
-            <View style={styles.rowSection}>
-                {sides.map((side, index) => (
-                    <View key={index} style={styles.sideContainer}>
-                        <TextInput
-                            onFocus={() => handleSideFocus(index)}
-                            style={[styles.input, (index === sides.length - 1 && index >= 2) && styles.inputWithTab]}
-                            value={side}
-                            onChangeText={(text) => handleSideChange(text, index)}
-                            placeholder={`Side ${index + 1}`}
-                        />
-                        {index === sides.length - 1 && index >= 2 && (
-                            <TouchableOpacity onPress={() => handleRemoveSide(index)} style={styles.deleteTab} />
-                        )}
-                    </View>
-                ))}
-                {sides.length < 4 && (
-                    <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
-                        <Ionicons name="add-circle-outline" size={24} color="blue" />
-                    </TouchableOpacity>
-                )}
-            </View>
+          {/* Sides Input Rows */}
+          <View style={styles.rowSection}>
+              {sides.map((side, index) => (
+                  <View key={index} style={styles.sideContainer}>
+                      <TextInput
+                          onFocus={() => handleSideFocus(index)}
+                          style={[
+                              styles.input,
+                              (index === sides.length - 1 && index >= 2) && styles.inputWithTab,
+                              editingSide === index && styles.activeInput  // Add highlight style for active input
+                          ]}
+                          value={side}
+                          onChangeText={(text) => handleSideChange(text, index)}
+                          placeholder={`Side ${index + 1}`}
+                      />
+                      {index === sides.length - 1 && index >= 2 && (
+                          <TouchableOpacity onPress={() => handleRemoveSide(index)} style={styles.deleteTab} />
+                      )}
+                  </View>
+              ))}
+              {sides.length < 4 && (
+                  <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
+                      <Ionicons name="add-circle-outline" size={24} color="blue" />
+                  </TouchableOpacity>
+              )}
+          </View>
 
-            {/* Card Overlay */}
-            <View style={styles.cardSection}>
-                <View style={styles.card}>
-                    <TextInput
-                        ref={cardInputRef}
-                        value={sides[editingSide]}
-                        onChangeText={(text) => handleSideChange(text, editingSide)}
-                        style={styles.cardTextInput}
-                    />
-                </View>
-            </View>
+          {/* Card Overlay */}
+          <View style={styles.cardSection}>
+              <View style={styles.card}>
+                  <TextInput
+                      ref={cardInputRef}
+                      value={sides[editingSide]}
+                      onChangeText={(text) => handleSideChange(text, editingSide)}
+                      style={styles.cardTextInput}
+                  />
+              </View>
+          </View>
 
-            {/* Footer buttons */}
-            <View style={styles.bottomSection}>
-                <Button title="Start Studying" onPress={handleStartStudying} />
-                <Button title="Add Flash Card" onPress={handleAddCard} />
-            </View>
+          {/* Footer buttons */}
+          <View style={styles.bottomSection}>
+              <Button title="Start Studying" onPress={handleStartStudying} />
+              <Button title="Add Flash Card" onPress={handleAddCard} />
+          </View>
 
-        </KeyboardAwareScrollView>
-    );
+      </KeyboardAwareScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -163,4 +167,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    activeInput: {
+      borderColor: 'blue',
+      borderWidth: 2,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+  },
 });
