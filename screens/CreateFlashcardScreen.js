@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../actions';
 import { Ionicons } from '@expo/vector-icons'; // Remember to install this package
@@ -11,7 +11,9 @@ export default function CreateFlashcardScreen({ route, navigation }) {
   const [sides, setSides] = useState(['', '']);
 
   const handleAddSide = () => {
-    setSides(prevSides => [...prevSides, '']);
+    if (sides.length < 4) {
+      setSides(prevSides => [...prevSides, '']);
+    }
   };
 
   const handleRemoveSide = (indexToRemove) => {
@@ -38,28 +40,40 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     navigation.navigate('Home'); // Navigate back to home page
   };
 
+  const [editingSide, setEditingSide] = useState(0);
+
+  const handleSideClick = (index) => {
+    setEditingSide(index);
+  };
+
   return (
     <View style={styles.container}>
-      {sides.map((side, index) => (
-        <View key={index} style={styles.sideContainer}>
-          <TextInput
-            style={styles.input}
-            value={side}
-            onChangeText={(text) => handleSideChange(text, index)}
-            placeholder={`Side ${index + 1}`}
-          />
-          {index > 1 && <Button title="Remove" onPress={() => handleRemoveSide(index)} />}
-        </View>
-      ))}
-
-      {sides[sides.length - 1].trim() !== '' && (
-        <TouchableOpacity onPress={handleAddSide} style={styles.iconButton}>
-          <Ionicons name="add-circle-outline" size={32} color="blue" />
-        </TouchableOpacity>
-      )}
-
-      <Button title="Add Flash Card" onPress={handleAddCard} />
-      <Button title="Start Studying" onPress={handleStartStudying} />
+  
+      <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
+        {sides.map((side, index) => (
+          <View key={index} style={styles.sideContainer}>
+            <TextInput
+              style={[styles.input, (index === sides.length - 1 && index >= 2) && styles.inputWithTab]}
+              value={side}
+              onChangeText={(text) => handleSideChange(text, index)}
+              placeholder={`Side ${index + 1}`}
+            />
+            {index === sides.length - 1 && index >= 2 && (
+              <TouchableOpacity onPress={() => handleRemoveSide(index)} style={styles.deleteTab} />
+            )}
+          </View>
+        ))}
+        { sides.length < 4 && (
+            <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
+                <Ionicons name="add-circle-outline" size={24} color="blue" />
+            </TouchableOpacity>
+        )}
+      </ScrollView>
+  
+      <View style={styles.footer}>
+        <Button title="Start Studying" onPress={handleStartStudying} />
+        <Button title="Add Flash Card" onPress={handleAddCard} />
+      </View>
     </View>
   );
 }
@@ -68,24 +82,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+  },
+  scrollViewContainer: {
+    height: '65%', // rough estimate to show 4 rows, adjust as needed
   },
   sideContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,  // reduced padding between rows
     width: '100%',
   },
   input: {
     flex: 1,
-    padding: 10,
+    padding: 5, // reduced padding to make input smaller
+    fontSize: 14,  // reduced font size
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 5,
-    marginRight: 10,
   },
-  iconButton: {
-    marginBottom: 20,
+  inputWithTab: {
+    marginRight: 8, 
+  },
+  deleteTab: {
+    width: 8,
+    height: '100%',
+    backgroundColor: 'red',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  addButtonContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 15,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,  // clearance at the bottom
   },
 });
