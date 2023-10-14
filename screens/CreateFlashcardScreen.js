@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../actions';
-import { Ionicons } from '@expo/vector-icons'; // Remember to install this package
+import { Ionicons } from '@expo/vector-icons';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
   const { deckName } = route.params;
   const dispatch = useDispatch();
-
   const [sides, setSides] = useState(['', '']);
+  const [editingSide, setEditingSide] = useState(0);
+  const scrollViewRef = useRef(null);
 
   const handleAddSide = () => {
     if (sides.length < 4) {
@@ -33,27 +34,27 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     }
 
     dispatch(addCardToDeck(deckName, { sides }));
-    setSides(['', '']); // Reset after adding
+    setSides(['', '']);
   };
 
   const handleStartStudying = () => {
-    navigation.navigate('Home'); // Navigate back to home page
+    navigation.navigate('Home');
   };
 
-  const [editingSide, setEditingSide] = useState(0);
-
-  const handleSideClick = (index) => {
+  const handleSideFocus = (index) => {
     setEditingSide(index);
+    scrollViewRef.current.scrollToEnd({ animated: true });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} ref={scrollViewRef}>
 
-      {/* 1. Top Section: Sides Input */}
+      {/* Top Section: Sides Input */}
       <View style={styles.topSection}>
         {sides.map((side, index) => (
           <View key={index} style={styles.sideContainer}>
             <TextInput
+              onFocus={() => handleSideFocus(index)}
               style={[styles.input, (index === sides.length - 1 && index >= 2) && styles.inputWithTab]}
               value={side}
               onChangeText={(text) => handleSideChange(text, index)}
@@ -71,20 +72,20 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         )}
       </View>
 
-      {/* 2. Middle Section: Card Overlay */}
+      {/* Middle Section: Card Overlay */}
       <View style={styles.middleSection}>
         <TouchableOpacity style={styles.card}>
           <Text>{sides[editingSide]}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 3. Bottom Section: Footer buttons */}
+      {/* Bottom Section: Footer buttons */}
       <View style={styles.bottomSection}>
         <Button title="Start Studying" onPress={handleStartStudying} />
         <Button title="Add Flash Card" onPress={handleAddCard} />
       </View>
 
-    </View>
+    </ScrollView>
   );
 }
 
@@ -94,9 +95,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  // 1. Top Section: Sides Input
+  // Top Section: Sides Input
   topSection: {
-    height: 250, // FIXME. shouldnt be hardcoded
+    height: 250,
   },
   sideContainer: {
     flexDirection: 'row',
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  // 2. Middle Section: Card Overlay
+  // Middle Section: Card Overlay
   middleSection: {
     flex: 2,
     justifyContent: 'center',
@@ -149,9 +150,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
 
-  // 3. Bottom Section: Footer buttons
+  // Bottom Section: Footer buttons
   bottomSection: {
-    height: 60, // Approximate height for buttons
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
