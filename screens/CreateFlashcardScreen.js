@@ -1,53 +1,68 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../actions';
 import { Ionicons } from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
+  // Extracting deckName from route parameters
   const { deckName } = route.params;
-  const dispatch = useDispatch();
-  const [sides, setSides] = useState(['', '']);
-  const [editingSide, setEditingSide] = useState(0);
-  const scrollViewRef = useRef(null);
 
+  // Setting up Redux dispatch
+  const dispatch = useDispatch();
+
+  // State for managing the content of the sides
+  const [sides, setSides] = useState(['', '']);
+
+  // State to determine which side is being edited
+  const [editingSide, setEditingSide] = useState(0);
+
+  // Reference to the main input inside the card for setting focus
+  const cardInputRef = useRef(null);
+
+  // Function to add a new side (up to 4 sides)
   const handleAddSide = () => {
     if (sides.length < 4) {
       setSides(prevSides => [...prevSides, '']);
     }
   };
 
+  // Function to remove a side by its index
   const handleRemoveSide = (indexToRemove) => {
     setSides(prevSides => prevSides.filter((_, index) => index !== indexToRemove));
   };
 
+  // Function to handle change of content on a side
   const handleSideChange = (text, index) => {
     const newSides = [...sides];
     newSides[index] = text;
     setSides(newSides);
   };
 
+  // Function to dispatch the creation of a new card to Redux
   const handleAddCard = () => {
     if (sides.some(side => side.trim() === '')) {
       alert('Please fill out all sides!');
       return;
     }
-
     dispatch(addCardToDeck(deckName, { sides }));
     setSides(['', '']);
   };
 
+  // Function to navigate back to the Home screen
   const handleStartStudying = () => {
     navigation.navigate('Home');
   };
 
+  // Function to handle the focus shift to the main card input
   const handleSideFocus = (index) => {
     setEditingSide(index);
-    scrollViewRef.current.scrollToEnd({ animated: true });
+    cardInputRef.current.focus();
   };
 
   return (
-    <ScrollView style={styles.container} ref={scrollViewRef}>
+    <KeyboardAwareScrollView style={styles.container}>
 
       {/* Top Section: Sides Input */}
       <View style={styles.topSection}>
@@ -74,9 +89,14 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
       {/* Middle Section: Card Overlay */}
       <View style={styles.middleSection}>
-        <TouchableOpacity style={styles.card}>
-          <Text>{sides[editingSide]}</Text>
-        </TouchableOpacity>
+        <View style={styles.card}>
+          <TextInput
+            ref={cardInputRef}
+            value={sides[editingSide]}
+            onChangeText={(text) => handleSideChange(text, editingSide)}
+            style={styles.cardTextInput}
+          />
+        </View>
       </View>
 
       {/* Bottom Section: Footer buttons */}
@@ -85,7 +105,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         <Button title="Add Flash Card" onPress={handleAddCard} />
       </View>
 
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -94,8 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-
-  // Top Section: Sides Input
   topSection: {
     height: 250,
   },
@@ -129,8 +147,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 15,
   },
-
-  // Middle Section: Card Overlay
   middleSection: {
     flex: 2,
     justifyContent: 'center',
@@ -149,8 +165,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-
-  // Bottom Section: Footer buttons
+  cardTextInput: {
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    fontSize: 16,
+  },
   bottomSection: {
     height: 60,
     flexDirection: 'row',
