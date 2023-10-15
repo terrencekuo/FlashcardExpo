@@ -1,4 +1,11 @@
-import { ADD_DECK, ADD_CARD, ADD_TOPIC, ADD_DECK_TO_TOPIC } from '../actions/index';
+import {
+  ADD_DECK,
+  ADD_CARD,
+  ADD_TOPIC,
+  ADD_DECK_TO_TOPIC,
+  DELETE_DECK,
+  DELETE_TOPIC
+} from '../actions/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function decks(state = { topics: {} }, action) {
@@ -51,6 +58,21 @@ function decks(state = { topics: {} }, action) {
           [action.topicName]: [...state.topics[action.topicName], action.deckTitle]
         }
       };
+      break;
+    
+    case DELETE_DECK:
+      newState = { ...state };
+      delete newState[action.deckTitle];  // Remove the deck
+
+      // Also, remove the deck from topics
+      Object.keys(newState.topics).forEach(topic => {
+        newState.topics[topic] = newState.topics[topic].filter(deck => deck !== action.deckTitle);
+      });
+      break;
+
+    case DELETE_TOPIC:
+      newState = { ...state };
+      delete newState.topics[action.topic];
       break;
 
     default:

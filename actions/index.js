@@ -2,6 +2,8 @@ export const ADD_TOPIC = 'ADD_TOPIC';
 export const ADD_DECK_TO_TOPIC = 'ADD_DECK_TO_TOPIC';
 export const ADD_DECK = 'ADD_DECK';
 export const ADD_CARD = 'ADD_CARD';
+export const DELETE_DECK = 'DELETE_DECK';
+export const DELETE_TOPIC = 'DELETE_TOPIC';
 
 export function addTopic(topicName) {
   return {
@@ -30,5 +32,19 @@ export function addCardToDeck(title, card) {
     type: ADD_CARD,
     title,
     card,
+  };
+}
+
+export function deleteDeck(deckTitle) {
+  return {
+    type: DELETE_DECK,
+    deckTitle,
+  };
+}
+
+export function deleteTopic(topic) {
+  return {
+    type: DELETE_TOPIC,
+    topic,
   };
 }

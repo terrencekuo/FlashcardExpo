@@ -9,9 +9,15 @@ import {
   TextInput,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { addTopic, addDeckToTopic } from '../actions';
+import {
+  addTopic,
+  addDeckToTopic,
+  deleteDeck,
+  deleteTopic
+} from '../actions';
 import { selectDecks } from '../selectors/deckSelectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 function HomeScreen({ navigation }) {
   const decks = useSelector(selectDecks);
@@ -40,12 +46,26 @@ function HomeScreen({ navigation }) {
     setModalVisible(false);
   };
 
+  const renderRightAction = (onDelete) => (
+    <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+      <Text style={styles.deleteText}>Delete</Text>
+    </TouchableOpacity>
+  );
+
+  const handleDeleteDeck = (deckTitle) => {
+    dispatch(deleteDeck(deckTitle));  // Dispatch deleteDeck action to delete the deck
+  };
+
+  const handleDeleteTopic = (topic) => {
+    dispatch(deleteTopic(topic));  // Dispatch deleteTopic action to delete the topic
+  };
+
   return (
     <View style={styles.container}>
   
       {/* Displaying Topics and their respective Decks */}
       {Object.keys(topics).map((topic) => (
-        <View key={topic}>
+        <Swipeable key={topic} renderRightActions={() => renderRightAction(() => handleDeleteTopic(topic))}>
           {/* Display Topic Titles */}
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
@@ -57,7 +77,7 @@ function HomeScreen({ navigation }) {
               <Text style={styles.deckTitle}>{deckTitle}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </Swipeable>
       ))}
   
       {/* Displaying Decks */}
@@ -65,24 +85,26 @@ function HomeScreen({ navigation }) {
         data={decks}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.deckItem,
-              inSelectionMode && selectedDecks.includes(item.title) ? styles.selectedDeck : {},
-            ]}
-            onPress={() => {
-              if (inSelectionMode) {
-                setSelectedDecks((prev) => {
-                  if (prev.includes(item.title)) return prev.filter((deck) => deck !== item.title);
-                  return [...prev, item.title];
-                });
-              } else {
-                navigation.navigate('DeckDetail', { deckName: item.title });
-              }
-            }}
-          >
-            <Text style={styles.deckTitle}>{item.title}</Text>
-          </TouchableOpacity>
+          <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
+            <TouchableOpacity
+              style={[
+                styles.deckItem,
+                inSelectionMode && selectedDecks.includes(item.title) ? styles.selectedDeck : {},
+              ]}
+              onPress={() => {
+                if (inSelectionMode) {
+                  setSelectedDecks((prev) => {
+                    if (prev.includes(item.title)) return prev.filter((deck) => deck !== item.title);
+                    return [...prev, item.title];
+                  });
+                } else {
+                  navigation.navigate('DeckDetail', { deckName: item.title });
+                }
+              }}
+            >
+              <Text style={styles.deckTitle}>{item.title}</Text>
+            </TouchableOpacity>
+          </Swipeable>
         )}
       />
   
@@ -208,7 +230,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: 130, // Width is the combined width of both buttons + padding
   },
-  
   groupIconContainer: {
     backgroundColor: '#007BFF',
     borderRadius: 30,
@@ -249,6 +270,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    width: 100, // Width of the delete button when swiped fully
+  },
+  deleteText: {
+    color: 'white',
+    padding: 20,
   },
 });
 
