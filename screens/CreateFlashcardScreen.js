@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../actions';
@@ -17,8 +17,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         { label: 'Pinyin', value: '' }
     ];
     const [sides, setSides] = useState(defaultSides);
-    const [editingSide, setEditingSide] = useState(0);
-    const cardInputRef = useRef(null);
 
     // Function to handle addition of a new side
     const handleAddSide = () => {
@@ -55,15 +53,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         navigation.navigate('Home');
     };
 
-    // Function to handle when a side input is focused
-    const handleSideFocus = (index) => {
-        setEditingSide(index);
-        cardInputRef.current.focus();
-    };
-
-    const lastTapRef = useRef(null);
-    const tapCountRef = useRef(0);
-
     return (
       <KeyboardAwareScrollView style={styles.container}>
 
@@ -73,11 +62,9 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                 <View key={index} style={styles.sideContainer}>
                     <Text>{side.label}</Text>
                     <TextInput
-                        onFocus={() => handleSideFocus(index)}
                         style={[
                             styles.input,
-                            (index === sides.length - 1 && index >= 2) && styles.inputWithTab,
-                            editingSide === index && styles.activeInput
+                            (index === sides.length - 1 && index >= 2) && styles.inputWithTab
                         ]}
                         value={side.value}
                         onChangeText={(text) => handleSideChange(text, index)}
@@ -93,18 +80,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                     <Ionicons name="add-circle-outline" size={24} color="blue" />
                 </TouchableOpacity>
             )}
-          </View>
-
-          {/* Card Overlay */}
-          <View style={styles.cardSection}>
-              <View style={styles.card}>
-                  <TextInput
-                      ref={cardInputRef}
-                      value={sides[editingSide]}
-                      onChangeText={(text) => handleSideChange(text, editingSide)}
-                      style={styles.cardTextInput}
-                  />
-              </View>
           </View>
 
           {/* Footer buttons */}
@@ -154,37 +129,9 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         marginBottom: 15,
     },
-    cardSection: {
-        marginBottom: 20,  // gives some space between card and footer
-    },
-    card: {
-        width: '100%',
-        height: 300,
-        backgroundColor: '#f7f7f7',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-    },
-    cardTextInput: {
-        fontSize: 16,
-        color: '#333',
-    },
     bottomSection: {
         marginTop: 'auto',  // this pushes the footer to the bottom
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    activeInput: {
-      borderColor: 'blue',
-      borderWidth: 2,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-  },
 });
