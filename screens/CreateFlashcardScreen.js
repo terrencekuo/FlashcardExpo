@@ -5,16 +5,24 @@ import { addCardToDeck } from '../actions';
 import { Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+const MAX_SIDES = 3;
+
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName } = route.params;
     const dispatch = useDispatch();
-    const [sides, setSides] = useState(['', '']);
+
+    const defaultSides = [
+        { label: 'Native Language', value: '' },
+        { label: 'Chinese Characters', value: '' },
+        { label: 'Pinyin', value: '' }
+    ];
+    const [sides, setSides] = useState(defaultSides);
     const [editingSide, setEditingSide] = useState(0);
     const cardInputRef = useRef(null);
 
     // Function to handle addition of a new side
     const handleAddSide = () => {
-        if (sides.length < 4) {
+        if (sides.length < MAX_SIDES) {
             setSides(prevSides => [...prevSides, '']);
         }
     };
@@ -27,19 +35,19 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     // Function to handle changing the text of a side
     const handleSideChange = (text, index) => {
         const newSides = [...sides];
-        newSides[index] = text;
+        newSides[index].value = text;
         setSides(newSides);
     };
 
-    // Function to add a new card to the deck
     const handleAddCard = () => {
-        if (sides.some(side => side.trim() === '')) {
+        if (sides.some(side => side.value.trim() === '')) {
             alert('Please fill out all sides!');
             return;
         }
 
-        dispatch(addCardToDeck(deckName, { sides }));
-        setSides(['', '']);
+        const cardValues = sides.map(side => side.value);
+        dispatch(addCardToDeck(deckName, { sides: cardValues }));
+        setSides(defaultSides);
     };
 
     // Navigation function to return to the home screen
@@ -53,34 +61,38 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         cardInputRef.current.focus();
     };
 
+    const lastTapRef = useRef(null);
+    const tapCountRef = useRef(0);
+
     return (
       <KeyboardAwareScrollView style={styles.container}>
 
           {/* Sides Input Rows */}
           <View style={styles.rowSection}>
-              {sides.map((side, index) => (
-                  <View key={index} style={styles.sideContainer}>
-                      <TextInput
-                          onFocus={() => handleSideFocus(index)}
-                          style={[
-                              styles.input,
-                              (index === sides.length - 1 && index >= 2) && styles.inputWithTab,
-                              editingSide === index && styles.activeInput  // Add highlight style for active input
-                          ]}
-                          value={side}
-                          onChangeText={(text) => handleSideChange(text, index)}
-                          placeholder={`Side ${index + 1}`}
-                      />
-                      {index === sides.length - 1 && index >= 2 && (
-                          <TouchableOpacity onPress={() => handleRemoveSide(index)} style={styles.deleteTab} />
-                      )}
-                  </View>
-              ))}
-              {sides.length < 4 && (
-                  <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
-                      <Ionicons name="add-circle-outline" size={24} color="blue" />
-                  </TouchableOpacity>
-              )}
+            {sides.map((side, index) => (
+                <View key={index} style={styles.sideContainer}>
+                    <Text>{side.label}</Text>
+                    <TextInput
+                        onFocus={() => handleSideFocus(index)}
+                        style={[
+                            styles.input,
+                            (index === sides.length - 1 && index >= 2) && styles.inputWithTab,
+                            editingSide === index && styles.activeInput
+                        ]}
+                        value={side.value}
+                        onChangeText={(text) => handleSideChange(text, index)}
+                        placeholder={`Enter ${side.label}`}
+                    />
+                    {index === sides.length - 1 && index >= 2 && (
+                        <TouchableOpacity onPress={() => handleRemoveSide(index)} style={styles.deleteTab} />
+                    )}
+                </View>
+            ))}
+            {sides.length < MAX_SIDES && (
+                <TouchableOpacity onPress={handleAddSide} style={styles.addButtonContainer}>
+                    <Ionicons name="add-circle-outline" size={24} color="blue" />
+                </TouchableOpacity>
+            )}
           </View>
 
           {/* Card Overlay */}

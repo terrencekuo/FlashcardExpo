@@ -27,11 +27,11 @@ function decks(state = { topics: {} }, action) {
 
     case ADD_CARD:
       newState = {
-        ...state,
-        [action.title]: {
-          ...state[action.title],
-          questions: state[action.title].questions.concat([action.card]),
-        },
+          ...state,
+          [action.title]: {
+              ...state[action.title],
+              questions: state[action.title].questions.concat([{ sides: action.card.sides }]),
+          },
       };
       break;
 
