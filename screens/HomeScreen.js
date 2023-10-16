@@ -60,6 +60,20 @@ function HomeScreen({ navigation }) {
     dispatch(deleteTopic(topic));  // Dispatch deleteTopic action to delete the topic
   };
 
+  // Get all deck titles that are associated with any topic
+  const getDecksInTopics = () => {
+    let decksInTopics = [];
+    Object.values(topics).forEach(topicDecks => {
+      decksInTopics = [...decksInTopics, ...topicDecks];
+    });
+    return decksInTopics;
+  };
+
+  const decksInTopics = getDecksInTopics();
+
+  // Filter out decks that are associated with a topic
+  const standaloneDecks = decks.filter(deck => !decksInTopics.includes(deck.title));
+
   return (
     <View style={styles.container}>
   
@@ -79,10 +93,10 @@ function HomeScreen({ navigation }) {
           ))}
         </Swipeable>
       ))}
-  
-      {/* Displaying Decks */}
+
+      {/* Displaying Standalone Decks */}
       <FlatList
-        data={decks}
+        data={standaloneDecks}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
           <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
@@ -155,7 +169,7 @@ function HomeScreen({ navigation }) {
         )}
       </View>
     </View>
-  );  
+  );
 }
 
 const styles = StyleSheet.create({
