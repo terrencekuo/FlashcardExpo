@@ -14,6 +14,16 @@ function StudyScreen({ route, navigation }) {
   }
 
   const { questions } = deck;
+
+  // If there are no questions in the deck
+  if (questions.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>There are no cards in this deck.</Text>
+      </View>
+    );
+  }
+
   const currentCard = questions[currentCardIndex];
 
   const handleFlipCard = () => {

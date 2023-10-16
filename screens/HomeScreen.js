@@ -18,6 +18,7 @@ import {
 import { selectDecks } from '../selectors/deckSelectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }) {
   const decks = useSelector(selectDecks);
@@ -72,7 +73,17 @@ function HomeScreen({ navigation }) {
   const decksInTopics = getDecksInTopics();
 
   // Filter out decks that are associated with a topic
-  const standaloneDecks = decks.filter(deck => !decksInTopics.includes(deck.title));
+  const standaloneDecks = decks.filter(deck => deck && deck.title && !decksInTopics.includes(deck.title));
+
+
+  const clearStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      alert('Storage successfully cleared!');
+    } catch (e) {
+      alert('Failed to clear the storage.');
+    }
+  };  
 
   return (
     <View style={styles.container}>
@@ -136,7 +147,7 @@ function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </Modal>
-  
+
       <View style={styles.fabContainer}>
         {/* In Selection Mode - Display Confirm and Cancel Icons */}
         {inSelectionMode ? (
@@ -144,7 +155,7 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.confirmIconContainer} onPress={handleGroupDecks}>
               <Icon name="check-circle" size={30} color="green" />
             </TouchableOpacity>
-  
+
             <TouchableOpacity style={styles.cancelIconContainer} onPress={() => {
               setSelectionMode(false);
               setSelectedDecks([]); // Deselect all items when cancelling
@@ -154,13 +165,18 @@ function HomeScreen({ navigation }) {
           </>
         ) : (
           <>
-            {/* Not in Selection Mode - Display Group Decks Icon and FAB for new deck */}
+            {/* Clear Storage Button */}
+            <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
+              <Icon name="delete" size={30} color="red" />
+            </TouchableOpacity>
+
+            {/* Not in Selection Mode - Display Group Decks Icon */}
             {decks.length > 0 && (
               <TouchableOpacity style={styles.groupIconContainer} onPress={() => setSelectionMode(true)}>
                 <Icon name="group" size={30} color="white" />
               </TouchableOpacity>
             )}
-  
+
             {/* FAB to add a new deck */}
             <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck')}>
               <Text style={styles.fabIcon}>+</Text>
@@ -242,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 130, // Width is the combined width of both buttons + padding
+    width: 200, // Increase the width to accommodate all three buttons
   },
   groupIconContainer: {
     backgroundColor: '#007BFF',
@@ -252,6 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
+    marginRight: 5, // Adjust the margin as needed
   },
   fab: {
     backgroundColor: '#007BFF',
@@ -265,6 +282,16 @@ const styles = StyleSheet.create({
   fabIcon: {
     color: 'white',
     fontSize: 30,
+  },
+  clearStorageIconContainer: {
+    backgroundColor: 'white', // or any other background color you prefer
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    marginRight: 5, // Adjust the margin as needed
   },
   confirmIconContainer: {
     backgroundColor: 'green',

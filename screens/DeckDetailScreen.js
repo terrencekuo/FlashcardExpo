@@ -7,6 +7,14 @@ function DeckDetailScreen({ navigation, route }) {
   const { deckName } = route.params;
   const deck = useSelector(state => selectDeckByName(state, deckName));
 
+  if (!deck) {
+    return (
+      <View style={styles.container}>
+        <Text>Error: Deck not found</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{deck.title}</Text>
