@@ -43,8 +43,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
             return;
         }
 
-        const cardValues = sides.map(side => side.value);
-        dispatch(addCardToDeck(deckName, { sides: cardValues }));
+        dispatch(addCardToDeck(deckName, sides));
         setSides(defaultSides);
     };
 

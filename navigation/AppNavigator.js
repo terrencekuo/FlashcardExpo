@@ -1,6 +1,5 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import CreateDeckScreen from '../screens/CreateDeckScreen';
 import CreateFlashcardScreen from '../screens/CreateFlashcardScreen';

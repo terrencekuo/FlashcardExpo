@@ -27,11 +27,11 @@ export function addDeck(title) {
   };
 }
 
-export function addCardToDeck(title, card) {
+export function addCardToDeck(title, sides) {
   return {
     type: ADD_CARD,
     title,
-    card,
+    card: {sides},
   };
 }
 

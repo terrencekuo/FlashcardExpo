@@ -30,7 +30,7 @@ function decks(state = { topics: {} }, action) {
           ...state,
           [action.title]: {
               ...state[action.title],
-              cards: state[action.title].cards.concat([{ sides: action.card.sides }]),
+              cards: state[action.title].cards.concat([action.card]),
           },
       };
       break;

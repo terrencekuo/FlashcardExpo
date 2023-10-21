@@ -43,7 +43,7 @@ function StudyScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.card} onPress={handleFlipCard}>
-        <Text>{currentCard.sides[showSide]}</Text>
+        <Text>{currentCard.sides[showSide].value}</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleNextCard}>
         <Text>Next Card</Text>
