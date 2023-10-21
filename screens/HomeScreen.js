@@ -49,11 +49,24 @@ function HomeScreen({ navigation }) {
     }
   };
 
-  const confirmGrouping = () => {
-    dispatch(addTopic(topicName));
-    setSelectedDecks([]);
-    setSelectionMode(false);
+  const cancelTopicCreation = () => {
     setModalVisible(false);
+    setTopicName('');  // Reset the topic name input
+  };
+
+  const confirmGrouping = () => {
+      dispatch(addTopic(topicName));
+      selectedDecks.forEach((deckTitle) => {
+          dispatch(addDeckToTopic(topicName, deckTitle));
+      });
+      setSelectedDecks([]);
+      setSelectionMode(false);
+      setModalVisible(false);
+  };
+
+  const cancelGrouping = () => {
+    setShowTopicsModal(false);
+    setSelectedDecks([]);  // Reset the selected decks
   };
 
   const renderRightAction = (onDelete) => (
@@ -162,31 +175,43 @@ function HomeScreen({ navigation }) {
       />
 
       <Modal animationType="slide" visible={showTopicsModal}>
-        <View style={styles.modalContainer}>
-          {Object.keys(topics).map((topic) => (
-            <TouchableOpacity key={topic} style={styles.topicItem} onPress={() => handleSelectTopic(topic)}>
-              <Text>{topic}</Text>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity style={styles.topicItem} onPress={() => handleSelectTopic('<Create new topic>')}>
-            <Text>Create new topic</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.modalContainer}>
+              {Object.keys(topics).map((topic) => (
+                  <TouchableOpacity key={topic} style={styles.topicItem} onPress={() => handleSelectTopic(topic)}>
+                      <Text>{topic}</Text>
+                  </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={styles.topicItem} onPress={() => handleSelectTopic('<Create new topic>')}>
+                  <Text>Create new topic</Text>
+              </TouchableOpacity>
+              
+              {/* Cancel Button */}
+              <TouchableOpacity style={styles.modalButton} onPress={cancelGrouping}>
+                  <Text>Cancel</Text>
+              </TouchableOpacity>
+          </View>
       </Modal>
   
       {/* Modal for topic name input */}
       <Modal animationType="slide" visible={isModalVisible}>
-        <View style={styles.modalContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter topic name"
-            value={topicName}
-            onChangeText={setTopicName}
-          />
-          <TouchableOpacity style={styles.modalButton} onPress={confirmGrouping}>
-            <Text>Confirm</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.modalContainer}>
+              <TextInput
+                  style={styles.input}
+                  placeholder="Enter topic name"
+                  value={topicName}
+                  onChangeText={setTopicName}
+              />
+              <View style={styles.modalButtonContainer}>
+                  <TouchableOpacity style={styles.modalButton} onPress={confirmGrouping} disabled={!topicName.trim()}>
+                      <Text>Confirm</Text>
+                  </TouchableOpacity>
+                  
+                  {/* Cancel Button */}
+                  <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelTopicCreation}>
+                      <Text>Cancel</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
       </Modal>
 
       <View style={styles.fabContainer}>
@@ -382,6 +407,23 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  modalButton: {
+    padding: 15,
+    backgroundColor: '#007BFF',
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 0.45,  // Adjust this to control the width
+    margin: 5,   // Add some margin around the buttons
+  },
+  cancelButton: {
+      backgroundColor: 'red',
+      flex: 0.45,  // Adjust this to control the width
   },
 });
 

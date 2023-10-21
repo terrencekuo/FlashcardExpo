@@ -42,16 +42,20 @@ function decks(state = { decks: {}, topics: {} }, action) {
         },
       };
       break;
-        
-    case ADD_TOPIC:
-      newState = {
-        ...state,
-        topics: {
-          ...state.topics,
-          [action.topicName]: []
+
+      case ADD_TOPIC:
+        if (!action.topicName.trim()) {
+            console.warn("Topic name cannot be empty.");
+            return state;
         }
-      };
-      break;
+        newState = {
+            ...state,
+            topics: {
+                ...state.topics,
+                [action.topicName]: []
+            }
+        };
+        break;
 
     case ADD_DECK_TO_TOPIC:
       if(!state.topics[action.topicName]) {
