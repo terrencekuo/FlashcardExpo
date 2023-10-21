@@ -30,18 +30,18 @@ function decks(state = { decks: {}, topics: {} }, action) {
       };
       break;
 
-      case ADD_CARD:
-        newState = {
-          ...state,  // Copy the current state
-          decks: {  // Target the 'decks' key in the state
-            ...state.decks,  // Copy all existing decks
-            [action.title]: {  // Update the specific deck where the card will be added
-              ...state.decks[action.title],  // Copy the current state of the deck
-              cards: state.decks[action.title].cards.concat([action.card]),  // Add the new card to the deck's cards
-            },
+    case ADD_CARD:
+      newState = {
+        ...state,  // Copy the current state
+        decks: {  // Target the 'decks' key in the state
+          ...state.decks,  // Copy all existing decks
+          [action.title]: {  // Update the specific deck where the card will be added
+            ...state.decks[action.title],  // Copy the current state of the deck
+            cards: state.decks[action.title].cards.concat([action.card]),  // Add the new card to the deck's cards
           },
-        };
-        break;
+        },
+      };
+      break;
         
     case ADD_TOPIC:
       newState = {
@@ -60,18 +60,18 @@ function decks(state = { decks: {}, topics: {} }, action) {
         return state;
       }
 
-      // Check if the deck is already in the topic
-      if (state.topics[action.topicName].includes(action.deckTitle)) {
-        console.warn("Deck already exists in the topic.");
-        return state;  // Return the current state without changes
+      // First, remove the deck from any topic it might be associated with
+      const updatedTopics = { ...state.topics };
+      for (let topic in updatedTopics) {
+        updatedTopics[topic] = updatedTopics[topic].filter(deckTitle => deckTitle !== action.deckTitle);
       }
+
+      // Then, add the deck to the specified topic
+      updatedTopics[action.topicName].push(action.deckTitle);
 
       newState = {
         ...state,
-        topics: {
-          ...state.topics,
-          [action.topicName]: [...state.topics[action.topicName], action.deckTitle]
-        }
+        topics: updatedTopics
       };
       break;
 
