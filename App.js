@@ -5,24 +5,13 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeDecksFromStorage } from './actions';  // Import the new action creator
 
 function AppInitializer({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        // Fetch the entire app state (both decks and topics) from AsyncStorage using the key 'appState'.
-        const savedState = await AsyncStorage.getItem('appState');
-        if (savedState) {
-          dispatch({ type: 'INITIALIZE_DECKS', appState: JSON.parse(savedState) });
-        }
-      } catch (error) {
-        console.error("Error fetching decks from AsyncStorage:", error);
-      }
-    }
-    fetchData();
+    dispatch(initializeDecksFromStorage());  // Use the new action creator
   }, []);
 
   return children;

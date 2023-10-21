@@ -13,7 +13,8 @@ import {
   addTopic,
   addDeckToTopic,
   deleteDeck,
-  deleteTopic
+  deleteTopic,
+  resetState
 } from '../actions';
 import { selectDecks } from '../selectors/deckSelectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
@@ -105,15 +106,17 @@ function HomeScreen({ navigation }) {
   // Filter out decks that are associated with a topic
   const standaloneDecks = decks.filter(deck => deck && deck.title && !decksInTopics.includes(deck.title));
 
-
   const clearStorage = async () => {
     try {
       await AsyncStorage.clear();
+      dispatch(resetState());  // Reset the Redux state
       alert('Storage successfully cleared!');
     } catch (e) {
-      alert('Failed to clear the storage.');
+      alert('Failed to clear the storage.', e);
+      console.error("Failed to clear the storage.", e);
     }
-  };  
+  };
+
   return (
     <View style={styles.container}>
   

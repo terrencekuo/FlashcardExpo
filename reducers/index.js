@@ -4,7 +4,8 @@ import {
   ADD_TOPIC,
   ADD_DECK_TO_TOPIC,
   DELETE_DECK,
-  DELETE_TOPIC
+  DELETE_TOPIC,
+  RESET_STATE
 } from '../actions/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -17,7 +18,15 @@ function decks(state = { decks: {}, topics: {} }, action) {
     case 'INITIALIZE_DECKS':
       return action.appState;
 
+    case RESET_STATE:
+      return { decks: {}, topics: {} };  // Reset to initial state
+
     case ADD_DECK:
+      if (!action.title.trim()) {
+        console.warn("Deck name cannot be empty.");
+        return state;
+      }
+
       newState = {
         ...state, // Copy the current state
         decks: {  // Target the 'decks' key in the state

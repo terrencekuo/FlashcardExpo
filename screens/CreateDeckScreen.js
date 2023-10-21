@@ -5,9 +5,15 @@ import { addDeck } from '../actions/index';
 
 function CreateDeckScreen({ navigation }) {
   const [title, setTitle] = useState('');
+  const [showError, setShowError] = useState(false);  // State to control the visibility of the error message
+
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
+    if (title.trim() === '') {
+      setShowError(true);
+      return;
+    }
     dispatch(addDeck(title));
     setTitle('');
     navigation.navigate('CreateFlashcard', { deckName: title });
@@ -21,6 +27,7 @@ function CreateDeckScreen({ navigation }) {
         value={title}
         onChangeText={setTitle}
       />
+      {showError && <Text style={{ color: 'red', marginBottom: 10 }}>Deck name cannot be empty.</Text>}
       <Button title="Create Deck" onPress={handleSubmit} />
     </View>
   );

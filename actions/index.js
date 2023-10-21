@@ -1,9 +1,26 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const ADD_TOPIC = 'ADD_TOPIC';
 export const ADD_DECK_TO_TOPIC = 'ADD_DECK_TO_TOPIC';
 export const ADD_DECK = 'ADD_DECK';
 export const ADD_CARD = 'ADD_CARD';
 export const DELETE_DECK = 'DELETE_DECK';
 export const DELETE_TOPIC = 'DELETE_TOPIC';
+export const INITIALIZE_DECKS = 'INITIALIZE_DECKS';
+export const RESET_STATE = 'RESET_STATE ';
+
+export function initializeDecksFromStorage() {
+  return async (dispatch) => {
+    try {
+      const savedState = await AsyncStorage.getItem('appState');
+      if (savedState) {
+        dispatch({ type: INITIALIZE_DECKS, appState: JSON.parse(savedState) });
+      }
+    } catch (error) {
+      console.error("Error fetching decks from AsyncStorage:", error);
+    }
+  };
+}
 
 export function addTopic(topicName) {
   return {
@@ -46,5 +63,11 @@ export function deleteTopic(topic) {
   return {
     type: DELETE_TOPIC,
     topic,
+  };
+}
+
+export function resetState() {
+  return {
+    type: RESET_STATE
   };
 }
