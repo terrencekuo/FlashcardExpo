@@ -233,14 +233,14 @@ function HomeScreen({ navigation }) {
         {inSelectionMode ? (
           <>
             <TouchableOpacity style={styles.confirmIconContainer} onPress={handleGroupDecks}>
-              <Icon name="check-circle" size={30} color="green" />
+                <Icon name="check-circle" size={30} color="green" />
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.cancelIconContainer} onPress={() => {
-              setSelectionMode(false);
-              setSelectedDecks([]); // Deselect all items when cancelling
+                setSelectionMode(false);
+                setSelectedDecks([]); // Deselect all items when cancelling
             }}>
-              <Icon name="cancel" size={30} color="red" />
+                <Icon name="cancel" size={30} color="red" />
             </TouchableOpacity>
           </>
         ) : (
@@ -289,28 +289,6 @@ const styles = StyleSheet.create({
   },
   deckTitle: {
     fontSize: 18,
-  },
-  groupButton: {
-    padding: 15,
-    backgroundColor: '#007BFF',
-    borderRadius: 8,
-    marginVertical: 15,
-    alignItems: 'center',
-  },
-  groupButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  confirmButton: {
-    padding: 15,
-    backgroundColor: 'green',
-    borderRadius: 8,
-    marginVertical: 15,
-    alignItems: 'center',
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
@@ -374,7 +352,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   confirmIconContainer: {
-    backgroundColor: 'green',
+    backgroundColor: 'transparent',
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -384,7 +362,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelIconContainer: {
-    backgroundColor: 'red',
+    backgroundColor: 'transparent',
     borderRadius: 30,
     width: 60,
     height: 60,
