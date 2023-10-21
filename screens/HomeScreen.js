@@ -31,30 +31,36 @@ function HomeScreen({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [topicName, setTopicName] = useState('');
   const [showTopicsModal, setShowTopicsModal] = useState(false);
+  const [showEmptyTextWarning, setShowEmptyTextWarning] = useState(false);
 
   const handleGroupDecks = () => {
     setShowTopicsModal(true);
   };
 
   const handleSelectTopic = (selectedTopic) => {
-    if (selectedTopic === '<Create new topic>') {
-      setShowTopicsModal(false);
-      setModalVisible(true);
-    } else {
-      selectedDecks.forEach((deckTitle) => {
-        dispatch(addDeckToTopic(selectedTopic, deckTitle));
-      });
-      setSelectedDecks([]);
-      setShowTopicsModal(false);
-    }
+      if (selectedTopic === '<Create new topic>') {
+          setShowTopicsModal(false);  // Close the topics modal first
+          setTimeout(() => setModalVisible(true), 300);  // Delay the opening of the next modal to prevent flashing
+      } else {
+          selectedDecks.forEach((deckTitle) => {
+              dispatch(addDeckToTopic(selectedTopic, deckTitle));
+          });
+          setSelectedDecks([]);
+          setShowTopicsModal(false);
+      }
   };
 
   const cancelTopicCreation = () => {
-    setModalVisible(false);
-    setTopicName('');  // Reset the topic name input
+      setModalVisible(false);
+      setTopicName('');  // Clear the text box
+      setShowEmptyTextWarning(false);  // Reset the warning
   };
 
   const confirmGrouping = () => {
+      if (!topicName.trim()) {
+          setShowEmptyTextWarning(true);
+          return;
+      }
       dispatch(addTopic(topicName));
       selectedDecks.forEach((deckTitle) => {
           dispatch(addDeckToTopic(topicName, deckTitle));
@@ -62,6 +68,8 @@ function HomeScreen({ navigation }) {
       setSelectedDecks([]);
       setSelectionMode(false);
       setModalVisible(false);
+      setTopicName('');  // Reset the topic name after confirming
+      setShowEmptyTextWarning(false);  // Reset the warning
   };
 
   const cancelGrouping = () => {
@@ -202,13 +210,16 @@ function HomeScreen({ navigation }) {
                   style={styles.input}
                   placeholder="Enter topic name"
                   value={topicName}
-                  onChangeText={setTopicName}
+                  onChangeText={(text) => {
+                      setTopicName(text);
+                      setShowEmptyTextWarning(false);  // Reset the warning when the user starts typing
+                  }}
               />
+              {showEmptyTextWarning && <Text style={{ color: 'red', marginBottom: 10 }}>Please enter a topic name.</Text>}
               <View style={styles.modalButtonContainer}>
-                  <TouchableOpacity style={styles.modalButton} onPress={confirmGrouping} disabled={!topicName.trim()}>
+                  <TouchableOpacity style={styles.modalButton} onPress={confirmGrouping}>
                       <Text>Confirm</Text>
                   </TouchableOpacity>
-                  
                   {/* Cancel Button */}
                   <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelTopicCreation}>
                       <Text>Cancel</Text>
