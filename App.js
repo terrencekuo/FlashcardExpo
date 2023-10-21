@@ -13,9 +13,10 @@ function AppInitializer({ children }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const savedDecks = await AsyncStorage.getItem('decks');
-        if (savedDecks) {
-          dispatch({ type: 'INITIALIZE_DECKS', decks: JSON.parse(savedDecks) });
+        // Fetch the entire app state (both decks and topics) from AsyncStorage using the key 'appState'.
+        const savedState = await AsyncStorage.getItem('appState');
+        if (savedState) {
+          dispatch({ type: 'INITIALIZE_DECKS', appState: JSON.parse(savedState) });
         }
       } catch (error) {
         console.error("Error fetching decks from AsyncStorage:", error);

@@ -1,16 +1,34 @@
-// selectors/deckSelectors.js
 import { createSelector } from 'reselect';
 
-const getDecks = state => Object.values(state);
+// This selector retrieves the entire decks object from the state.
+// The state structure is assumed to be:
+// {
+//   decks: {
+//     DeckName1: { ... },
+//     DeckName2: { ... },
+//     ...
+//   },
+//   topics: { ... }
+// }
+// So, we want to extract the 'decks' part of this structure.
+const getDecks = state => Object.values(state.decks);
 
+// Using reselect's createSelector, we create a memoized selector that
+// returns all the decks as an array of deck objects.
+// This is useful when you want to iterate over all decks, for example in a list view.
 export const selectDecks = createSelector(
-  [getDecks],
-  (decks) => decks
+  [getDecks], // Input selectors
+  (decks) => decks // Result function
 );
 
-const getDeckByName = (state, deckName) => state[deckName];
+// This selector retrieves a specific deck by its name from the state.
+// Given the state structure mentioned above, we want to access something like state.decks[deckName].
+const getDeckByName = (state, deckName) => state.decks[deckName];
 
+// Using reselect's createSelector, we create a memoized selector that
+// returns a specific deck based on its name.
+// This is useful when you want details of a specific deck.
 export const selectDeckByName = createSelector(
-  [getDeckByName],
-  (deck) => deck
+  [getDeckByName], // Input selectors
+  (deck) => deck // Result function
 );

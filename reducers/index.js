@@ -8,33 +8,41 @@ import {
 } from '../actions/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function decks(state = { topics: {} }, action) {
+// The initial state now has two top-level keys: 'decks' and 'topics'.
+// 'decks' will store all the individual decks, and 'topics' will store the associations between topics and decks.
+function decks(state = { decks: {}, topics: {} }, action) {
   let newState = state;
 
   switch (action.type) {
     case 'INITIALIZE_DECKS':
-      return action.decks;
+      return action.appState;
 
     case ADD_DECK:
       newState = {
-        ...state,
-        [action.title]: {
-          title: action.title,
-          cards: [],
+        ...state, // Copy the current state
+        decks: {  // Target the 'decks' key in the state
+          ...state.decks,  // Copy all existing decks
+          [action.title]: {  // Add a new deck with the given title
+            title: action.title,  // Set the title of the new deck
+            cards: [],  // Initialize an empty array for cards
+          },
         },
       };
       break;
 
-    case ADD_CARD:
-      newState = {
-          ...state,
-          [action.title]: {
-              ...state[action.title],
-              cards: state[action.title].cards.concat([action.card]),
+      case ADD_CARD:
+        newState = {
+          ...state,  // Copy the current state
+          decks: {  // Target the 'decks' key in the state
+            ...state.decks,  // Copy all existing decks
+            [action.title]: {  // Update the specific deck where the card will be added
+              ...state.decks[action.title],  // Copy the current state of the deck
+              cards: state.decks[action.title].cards.concat([action.card]),  // Add the new card to the deck's cards
+            },
           },
-      };
-      break;
-
+        };
+        break;
+        
     case ADD_TOPIC:
       newState = {
         ...state,
@@ -59,35 +67,36 @@ function decks(state = { topics: {} }, action) {
         }
       };
       break;
-    
-    case DELETE_DECK:
-      newState = { ...state };
-      delete newState[action.deckTitle];  // Remove the deck
 
-      // Also, remove the deck from topics
+    case DELETE_DECK:
+      newState = { ...state };  // Copy the current state
+      delete newState.decks[action.deckTitle];  // Remove the specified deck from the 'decks' key
+    
+      // Also, remove the deck from all topics that reference it
       Object.keys(newState.topics).forEach(topic => {
         newState.topics[topic] = newState.topics[topic].filter(deck => deck !== action.deckTitle);
       });
       break;
 
     case DELETE_TOPIC:
-      newState = { ...state };
-
-      // Delete all decks associated with the topic
+      newState = { ...state };  // Copy the current state
+    
+      // Delete all decks associated with the topic from the 'decks' key
       newState.topics[action.topic].forEach(deckTitle => {
-        delete newState[deckTitle];
+        delete newState.decks[deckTitle];
       });
-
-      // Remove the topic itself
+    
+      // Remove the topic itself from the 'topics' key
       delete newState.topics[action.topic];
       break;
-
+      
     default:
       return state;
   }
 
-  // Persist the entire newState to AsyncStorage
-  AsyncStorage.setItem('decks', JSON.stringify(newState));
+  // We're now saving the entire app state (both decks and topics) under the key 'appState'.
+  AsyncStorage.setItem('appState', JSON.stringify(newState));
+
   return newState;
 }
 
