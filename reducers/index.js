@@ -59,6 +59,13 @@ function decks(state = { decks: {}, topics: {} }, action) {
         console.error("Topic does not exist.");
         return state;
       }
+
+      // Check if the deck is already in the topic
+      if (state.topics[action.topicName].includes(action.deckTitle)) {
+        console.warn("Deck already exists in the topic.");
+        return state;  // Return the current state without changes
+      }
+
       newState = {
         ...state,
         topics: {

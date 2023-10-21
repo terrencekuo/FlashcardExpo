@@ -105,6 +105,14 @@ function HomeScreen({ navigation }) {
         </Swipeable>
       ))}
 
+      {/* Header for Standalone Decks */}
+      {standaloneDecks.length > 0 && (
+        <View style={styles.standaloneDeckContainer}>
+          <Text style={styles.standaloneDeckHeader}>Standalone Decks</Text>
+          <Text style={styles.standaloneDeckDescription}>Decks without a topic</Text>
+        </View>
+      )}
+
       {/* Displaying Standalone Decks */}
       <FlatList
         data={standaloneDecks}
@@ -321,6 +329,21 @@ const styles = StyleSheet.create({
   deleteText: {
     color: 'white',
     padding: 20,
+  },
+  standaloneDeckContainer: {
+    backgroundColor: '#f7f7f7',  // subtle background color
+    borderRadius: 5,
+    padding: 5,
+    marginTop: 20,
+  },
+  standaloneDeckHeader: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#007BFF',  // different color to make it stand out
+  },
+  standaloneDeckDescription: {
+    fontSize: 12,
+    color: 'gray',
   },
 });
 
