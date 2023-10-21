@@ -181,14 +181,17 @@ function HomeScreen({ navigation }) {
                       <Text>{topic}</Text>
                   </TouchableOpacity>
               ))}
-              <TouchableOpacity style={styles.topicItem} onPress={() => handleSelectTopic('<Create new topic>')}>
-                  <Text>Create new topic</Text>
-              </TouchableOpacity>
               
-              {/* Cancel Button */}
-              <TouchableOpacity style={styles.modalButton} onPress={cancelGrouping}>
-                  <Text>Cancel</Text>
-              </TouchableOpacity>
+              <View style={styles.modalButtonContainer}>
+                  <TouchableOpacity style={styles.modalButton} onPress={() => handleSelectTopic('<Create new topic>')}>
+                      <Text>Create new topic</Text>
+                  </TouchableOpacity>
+                  
+                  {/* Cancel Button */}
+                  <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelGrouping}>
+                      <Text>Cancel</Text>
+                  </TouchableOpacity>
+              </View>
           </View>
       </Modal>
   
@@ -414,12 +417,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modalButton: {
-    padding: 15,
-    backgroundColor: '#007BFF',
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 0.45,  // Adjust this to control the width
-    margin: 5,   // Add some margin around the buttons
+      flex: 0.45,  // Adjust this to control the width
+      padding: 15,
+      backgroundColor: '#007BFF',
+      borderRadius: 8,
+      alignItems: 'center',
+      margin: 5,   // Add some margin around the buttons
   },
   cancelButton: {
       backgroundColor: 'red',
