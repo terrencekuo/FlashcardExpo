@@ -30,18 +30,27 @@ function HomeScreen({ navigation }) {
   const [selectedDecks, setSelectedDecks] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [topicName, setTopicName] = useState('');
+  const [showTopicsModal, setShowTopicsModal] = useState(false);
 
   const handleGroupDecks = () => {
-    setModalVisible(true);
+    setShowTopicsModal(true);
+  };
+
+  const handleSelectTopic = (selectedTopic) => {
+    if (selectedTopic === '<Create new topic>') {
+      setShowTopicsModal(false);
+      setModalVisible(true);
+    } else {
+      selectedDecks.forEach((deckTitle) => {
+        dispatch(addDeckToTopic(selectedTopic, deckTitle));
+      });
+      setSelectedDecks([]);
+      setShowTopicsModal(false);
+    }
   };
 
   const confirmGrouping = () => {
     dispatch(addTopic(topicName));
-    selectedDecks.forEach((deckTitle) => {
-      dispatch(addDeckToTopic(topicName, deckTitle));
-    });
-
-    // Reset selections and modal visibility
     setSelectedDecks([]);
     setSelectionMode(false);
     setModalVisible(false);
@@ -84,7 +93,6 @@ function HomeScreen({ navigation }) {
       alert('Failed to clear the storage.');
     }
   };  
-
   return (
     <View style={styles.container}>
   
@@ -96,8 +104,20 @@ function HomeScreen({ navigation }) {
           {topics[topic].map((deckTitle) => (
             <TouchableOpacity
               key={deckTitle}
-              style={styles.deckItem}
-              onPress={() => navigation.navigate('DeckDetail', { deckName: deckTitle })}
+              style={[
+                styles.deckItem,
+                inSelectionMode && selectedDecks.includes(deckTitle) ? styles.selectedDeck : {},
+              ]}
+              onPress={() => {
+                if (inSelectionMode) {
+                  setSelectedDecks((prev) => {
+                    if (prev.includes(deckTitle)) return prev.filter((deck) => deck !== deckTitle);
+                    return [...prev, deckTitle];
+                  });
+                } else {
+                  navigation.navigate('DeckDetail', { deckName: deckTitle });
+                }
+              }}
             >
               <Text style={styles.deckTitle}>{deckTitle}</Text>
             </TouchableOpacity>
@@ -140,6 +160,19 @@ function HomeScreen({ navigation }) {
           </Swipeable>
         )}
       />
+
+      <Modal animationType="slide" visible={showTopicsModal}>
+        <View style={styles.modalContainer}>
+          {Object.keys(topics).map((topic) => (
+            <TouchableOpacity key={topic} style={styles.topicItem} onPress={() => handleSelectTopic(topic)}>
+              <Text>{topic}</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity style={styles.topicItem} onPress={() => handleSelectTopic('<Create new topic>')}>
+            <Text>Create new topic</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
   
       {/* Modal for topic name input */}
       <Modal animationType="slide" visible={isModalVisible}>
@@ -213,7 +246,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   selectedDeck: {
-    backgroundColor: '#E0E0E0',  // Highlight color for selected deck
+    backgroundColor: '#E0E0E0',
   },
   deckTitle: {
     fontSize: 18,
@@ -266,7 +299,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 200, // Increase the width to accommodate all three buttons
+    width: 200,
   },
   groupIconContainer: {
     backgroundColor: '#007BFF',
@@ -276,7 +309,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
-    marginRight: 5, // Adjust the margin as needed
+    marginRight: 5,
   },
   fab: {
     backgroundColor: '#007BFF',
@@ -292,14 +325,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   clearStorageIconContainer: {
-    backgroundColor: 'white', // or any other background color you prefer
+    backgroundColor: 'white',
     borderRadius: 30,
     width: 60,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
-    marginRight: 5, // Adjust the margin as needed
+    marginRight: 5,
   },
   confirmIconContainer: {
     backgroundColor: 'green',
@@ -309,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
-    marginRight: 10, // Margin to separate the icons
+    marginRight: 10,
   },
   cancelIconContainer: {
     backgroundColor: 'red',
@@ -324,14 +357,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    width: 100, // Width of the delete button when swiped fully
+    width: 100,
   },
   deleteText: {
     color: 'white',
     padding: 20,
   },
   standaloneDeckContainer: {
-    backgroundColor: '#f7f7f7',  // subtle background color
+    backgroundColor: '#f7f7f7',
     borderRadius: 5,
     padding: 5,
     marginTop: 20,
@@ -339,11 +372,16 @@ const styles = StyleSheet.create({
   standaloneDeckHeader: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#007BFF',  // different color to make it stand out
+    color: '#007BFF',
   },
   standaloneDeckDescription: {
     fontSize: 12,
     color: 'gray',
+  },
+  topicItem: {
+    padding: 15,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
   },
 });
 
