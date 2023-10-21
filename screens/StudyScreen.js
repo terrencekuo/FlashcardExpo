@@ -13,10 +13,10 @@ function StudyScreen({ route, navigation }) {
     return <Text>Deck not found!</Text>;
   }
 
-  const { questions } = deck;
+  const { cards } = deck;
 
   // If there are no questions in the deck
-  if (questions.length === 0) {
+  if (cards.length === 0) {
     return (
       <View style={styles.container}>
         <Text>There are no cards in this deck.</Text>
@@ -24,7 +24,7 @@ function StudyScreen({ route, navigation }) {
     );
   }
 
-  const currentCard = questions[currentCardIndex];
+  const currentCard = cards[currentCardIndex];
 
   const handleFlipCard = () => {
     const nextSide = (showSide + 1) % currentCard.sides.length;
@@ -32,7 +32,7 @@ function StudyScreen({ route, navigation }) {
   };
 
   const handleNextCard = () => {
-    if (currentCardIndex < questions.length - 1) {
+    if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setShowSide(0);
     } else {

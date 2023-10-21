@@ -20,7 +20,7 @@ function decks(state = { topics: {} }, action) {
         ...state,
         [action.title]: {
           title: action.title,
-          questions: [],
+          cards: [],
         },
       };
       break;
@@ -30,7 +30,7 @@ function decks(state = { topics: {} }, action) {
           ...state,
           [action.title]: {
               ...state[action.title],
-              questions: state[action.title].questions.concat([{ sides: action.card.sides }]),
+              cards: state[action.title].cards.concat([{ sides: action.card.sides }]),
           },
       };
       break;
@@ -72,6 +72,13 @@ function decks(state = { topics: {} }, action) {
 
     case DELETE_TOPIC:
       newState = { ...state };
+
+      // Delete all decks associated with the topic
+      newState.topics[action.topic].forEach(deckTitle => {
+        delete newState[deckTitle];
+      });
+
+      // Remove the topic itself
       delete newState.topics[action.topic];
       break;
 
