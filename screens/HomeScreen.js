@@ -46,6 +46,7 @@ function HomeScreen({ navigation }) {
   const [imageSource, setImageSource] = useState(null);
   const [textOverlays, setTextOverlays] = useState([]);
   const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const [displayedImageSize, setDisplayedImageSize] = useState({ width: 0, height: 0 });
 
   // Function to open the image modal
   const showImageWithTextOverlay = () => {
@@ -66,23 +67,53 @@ function HomeScreen({ navigation }) {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
-      } else {
-        const source = response.assets && response.assets[0] ? { uri: response.assets[0].uri } : null;
-        setImageSource({ uri: source.uri }); // Save the picked image's source
+      } else if (response.assets && response.assets.length > 0) {
+        const selectedImage = response.assets[0];
+        const source = { uri: selectedImage.uri };
+        const originalWidth = selectedImage.width;
+        const originalHeight = selectedImage.height;
+        setImageSource(source); // Save the picked image's source
         console.log('here got image', source);
+        console.log('image width and height', originalWidth, originalHeight);
 
-        // Process the selected image with ML Kit
-        CustomMethods.recognizeTextFromImage(source.uri)
-        .then(overlays => {
-          console.log("Recognized Overlays: ", overlays);
-          console.log("image:", source);
-          setTextOverlays(overlays); // Set the text overlays to state
-          showImageWithTextOverlay();
-        })
-        .catch(error => {
-          console.error("Failed to recognize text: ", error);
-        });
+        // You could use the Image.getSize method to get the size of the image and calculate the aspect ratio
+        Image.getSize(source.uri, (originalWidth, originalHeight) => {
+          const screenWidth = Dimensions.get('window').width;
+          const scaleFactor = originalWidth / screenWidth; // scaleFactor is used to scale coordinates
+          const imageHeight = originalHeight / scaleFactor;
+          console.log('getSize scaleFactor and height', scaleFactor, screenWidth, imageHeight);
 
+          setDisplayedImageSize({ width: screenWidth, height: imageHeight });
+
+          // Process the selected image with ML Kit
+          CustomMethods.recognizeTextFromImage(source.uri)
+            .then(overlays => {
+              console.log("Recognized Overlays: ", overlays);
+              console.log("image:", source);
+
+              // Scale the overlay coordinates
+              const scaledOverlays = overlays.map(overlay => {
+                return {
+                  ...overlay,
+                  frame: {
+                    x: overlay.frame.x / scaleFactor,
+                    y: overlay.frame.y / scaleFactor,
+                    width: overlay.frame.width / scaleFactor,
+                    height: overlay.frame.height / scaleFactor,
+                  },
+                };
+              });
+
+              setTextOverlays(scaledOverlays); // Set the text overlays to state
+              showImageWithTextOverlay();
+            })
+            .catch(error => {
+              console.error("Failed to recognize text: ", error);
+            });
+
+          }, (error) => {
+              console.error(`Couldn't get the size of the image: ${error.message}`);
+          });
       }
     });
   };
@@ -193,27 +224,26 @@ function HomeScreen({ navigation }) {
               <View style={styles.imageViewContainer}>
                 <Image
                   source={{ uri: imageSource.uri }}
-                  // style={{width: 300, height: 300}}
-                  style={styles.image}
+                  style={{ width: displayedImageSize.width, height: displayedImageSize.height }}
                   resizeMode="contain"
                   onError={(e) => console.log('Failed to load image:', e.nativeEvent.error)} // Add error handling
                 />
                 {textOverlays.map((overlay, index) => (
-                  <Text
+                  <View
                     key={index}
                     style={[
                       styles.textOverlay,
                       {
-                        position: 'absolute', // Ensure overlays are absolutely positioned
-                        top: overlay.frame.y, // You might need to adjust these values
-                        left: overlay.frame.x, // based on the image's actual display size
+                        position: 'absolute',
+                        left: overlay.frame.x, // These are the scaled coordinates
+                        top: overlay.frame.y,
                         width: overlay.frame.width,
                         height: overlay.frame.height,
+                        borderColor: 'red',
+                        borderWidth: 1,
                       },
                     ]}
-                  >
-                    {overlay.text}
-                  </Text>
+                  />
                 ))}
               </View>
             )}
@@ -533,7 +563,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -549,15 +579,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5
-  },
-  image: {
-    // Set both width and height to the calculated width for a square aspect ratio
-    width: imageWidth,
-    height: imageWidth,
-    // Use 'cover' or 'contain' based on how you want to display the image
-    resizeMode: 'cover',
-    // Apply margins to make the image centered with space on the sides
-    marginHorizontal: sideMargin,
   },
 });
 
