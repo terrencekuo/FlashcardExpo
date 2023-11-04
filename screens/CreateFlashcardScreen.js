@@ -12,6 +12,10 @@ import { addCardToDeck } from '../actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ImagePickerButton from '../components/ExtractTextFromImage';
 
+const CardTypeEnum = {
+    CUSTOM: 'Custom',
+    CHINESE: 'Chinese',
+  };
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName } = route.params;
@@ -42,7 +46,9 @@ export default function CreateFlashcardScreen({ route, navigation }) {
             return;
         }
 
-        dispatch(addCardToDeck(deckName, sides));
+        const epochTimeMilliseconds = Date.now();
+
+        dispatch(addCardToDeck(deckName, CardTypeEnum.CHINESE, sides, epochTimeMilliseconds));
         setSides(defaultSides);
     };
 
