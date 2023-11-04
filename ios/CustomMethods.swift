@@ -10,6 +10,21 @@ import MLKitTextRecognition
 import MLKitVision
 import MLKit
 
+extension UIImage {
+    func fixOrientation() -> UIImage {
+        if self.imageOrientation == .up {
+            return self
+        }
+
+        UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
+        self.draw(in: CGRect(origin: CGPoint.zero, size: self.size))
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+
+        return normalizedImage
+    }
+}
+
 @objc(CustomMethods)
 class CustomMethods: NSObject {
   @objc public func simpleMethod() { print("Swift is powerful") }
@@ -21,7 +36,7 @@ class CustomMethods: NSObject {
     // Remove the "file://" prefix from the imagePath
     let adjustedImagePath = imagePath.replacingOccurrences(of: "file://", with: "")
     
-    guard let image = UIImage(contentsOfFile: adjustedImagePath) else {
+    guard let image = UIImage(contentsOfFile: adjustedImagePath)?.fixOrientation() else {
         rejecter("ERROR", "Failed to load image", nil)
         return
     }
