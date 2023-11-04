@@ -15,6 +15,7 @@ export function initializeDecksFromStorage() {
       const savedState = await AsyncStorage.getItem('appState');
       if (savedState) {
         dispatch({ type: INITIALIZE_DECKS, appState: JSON.parse(savedState) });
+        // console.info("savedState:", JSON.parse(savedState));
       }
     } catch (error) {
       console.error("Error fetching decks from AsyncStorage:", error);

@@ -25,6 +25,7 @@ function StudyScreen({ route, navigation }) {
   }
 
   const currentCard = cards[currentCardIndex];
+  // console.info("currentCard:", currentCard);
 
   const handleFlipCard = () => {
     const nextSide = (showSide + 1) % currentCard.sides.length;
