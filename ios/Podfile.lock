@@ -582,6 +582,8 @@ PODS:
   - RNGestureHandler (2.13.3):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - RNPermissions (3.10.1):
+    - React-Core
   - RNReanimated (3.3.0):
     - DoubleConversion
     - FBLazyVector
@@ -682,6 +684,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -825,6 +828,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -909,12 +914,13 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: fa40ab6b6cafaa7609294d31f8e8fbbd0cce8ea6
+  RNPermissions: e9980c7c19d2445d604d8b61a0c7c3ffca45c2b1
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 2a28f2973f4d0d4623e18629ebfc2c4adaceb39a
   RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
 
-PODFILE CHECKSUM: 7b5437220189b61ddc5e9acc6ff4149566dac159
+PODFILE CHECKSUM: 76cc51f4b9b37e2301de86a400de30db9bb38deb
 
 COCOAPODS: 1.13.0

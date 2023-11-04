@@ -7,6 +7,9 @@ import {
   StyleSheet,
   Modal,
   TextInput,
+  TouchableHighlight,
+  Image,
+  Dimensions,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -20,11 +23,69 @@ import { selectDecks } from '../selectors/deckSelectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {launchImageLibrary} from 'react-native-image-picker';
+import { NativeModules } from "react-native"
+
+const { CustomMethods } = NativeModules
+
+// Get the window width from Dimensions API
+const windowWidth = Dimensions.get('window').width;
+
+// Set the image width as a percentage of the screen width
+const imageWidthPercent = 0.9; // 90% of the screen width
+const imageWidth = windowWidth * imageWidthPercent;
+
+// Calculate the side margins based on the image width
+const sideMargin = (windowWidth - imageWidth) / 2;
 
 function HomeScreen({ navigation }) {
   const decks = useSelector(selectDecks);
   const topics = useSelector((state) => state.topics || {});
   const dispatch = useDispatch();
+
+  const [imageSource, setImageSource] = useState(null);
+  const [textOverlays, setTextOverlays] = useState([]);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+
+  // Function to open the image modal
+  const showImageWithTextOverlay = () => {
+    setImageModalVisible(true);
+  };
+
+  const pickImage = () => {
+    const options = {
+      title: 'Select Photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const source = response.assets && response.assets[0] ? { uri: response.assets[0].uri } : null;
+        setImageSource({ uri: source.uri }); // Save the picked image's source
+        console.log('here got image', source);
+
+        // Process the selected image with ML Kit
+        CustomMethods.recognizeTextFromImage(source.uri)
+        .then(overlays => {
+          console.log("Recognized Overlays: ", overlays);
+          console.log("image:", source);
+          setTextOverlays(overlays); // Set the text overlays to state
+          showImageWithTextOverlay();
+        })
+        .catch(error => {
+          console.error("Failed to recognize text: ", error);
+        });
+
+      }
+    });
+  };
 
   // Local state to manage selection mode
   const [inSelectionMode, setSelectionMode] = useState(false);
@@ -119,7 +180,55 @@ function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-  
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={isImageModalVisible}
+        onRequestClose={() => {
+          setImageModalVisible(!isImageModalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {imageSource && (
+              <View style={styles.imageViewContainer}>
+                <Image
+                  source={{ uri: imageSource.uri }}
+                  // style={{width: 300, height: 300}}
+                  style={styles.image}
+                  resizeMode="contain"
+                  onError={(e) => console.log('Failed to load image:', e.nativeEvent.error)} // Add error handling
+                />
+                {textOverlays.map((overlay, index) => (
+                  <Text
+                    key={index}
+                    style={[
+                      styles.textOverlay,
+                      {
+                        position: 'absolute', // Ensure overlays are absolutely positioned
+                        top: overlay.frame.y, // You might need to adjust these values
+                        left: overlay.frame.x, // based on the image's actual display size
+                        width: overlay.frame.width,
+                        height: overlay.frame.height,
+                      },
+                    ]}
+                  >
+                    {overlay.text}
+                  </Text>
+                ))}
+              </View>
+            )}
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setImageModalVisible(!isImageModalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
       {/* Displaying Topics and their respective Decks */}
       {Object.keys(topics).map((topic) => (
         <Swipeable key={topic} renderRightActions={() => renderRightAction(() => handleDeleteTopic(topic))}>
@@ -249,7 +358,7 @@ function HomeScreen({ navigation }) {
         ) : (
           <>
             {/* Clear Storage Button */}
-            <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
+            <TouchableOpacity style={styles.clearStorageIconContainer} onPress={pickImage}>
               <Icon name="delete" size={30} color="red" />
             </TouchableOpacity>
 
@@ -419,6 +528,36 @@ const styles = StyleSheet.create({
   cancelButton: {
       backgroundColor: 'red',
       flex: 0.45,  // Adjust this to control the width
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  image: {
+    // Set both width and height to the calculated width for a square aspect ratio
+    width: imageWidth,
+    height: imageWidth,
+    // Use 'cover' or 'contain' based on how you want to display the image
+    resizeMode: 'cover',
+    // Apply margins to make the image centered with space on the sides
+    marginHorizontal: sideMargin,
   },
 });
 

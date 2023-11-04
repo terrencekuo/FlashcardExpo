@@ -3,7 +3,9 @@
 <plist version="1.0">
   <dict>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow access to the photo library for selecting images</string>
+    <string>We would like access to your photo gallery</string>
+    <key>NSCameraUsageDescription</key>
+    <string>We would like to use your camera</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>

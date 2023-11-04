@@ -17,9 +17,6 @@ class CustomMethods: NSObject {
   @objc func recognizeTextFromImage(_ imagePath: String,
                                     resolver: @escaping RCTPromiseResolveBlock,
                                     rejecter: @escaping RCTPromiseRejectBlock) {
-
-    
-    print("a")
     
     // Remove the "file://" prefix from the imagePath
     let adjustedImagePath = imagePath.replacingOccurrences(of: "file://", with: "")
@@ -28,29 +25,45 @@ class CustomMethods: NSObject {
         rejecter("ERROR", "Failed to load image", nil)
         return
     }
-    print("b")
-    
+
     let visionImage = VisionImage(image: image)
     visionImage.orientation = image.imageOrientation
 
-//      // recognize english
-//      let options = TextRecognizerOptions()
-//      let onDeviceTextRecognizer = TextRecognizer.textRecognizer(options: options)
-    
-      // recognize chinese
-      let options = ChineseTextRecognizerOptions()
-      let onDeviceTextRecognizer = TextRecognizer.textRecognizer(options: options)
-    
-      print("c")
-      onDeviceTextRecognizer.process(visionImage) { result, error in
-          guard error == nil, let result = result else {
-              rejecter("ERROR", "Failed to recognize text: \(error?.localizedDescription ?? "")", nil)
-              return
-          }
+    // let options = TextRecognizerOptions() // recognize english
+    let options = ChineseTextRecognizerOptions() // recognize chinese
+    let onDeviceTextRecognizer = TextRecognizer.textRecognizer(options: options)
 
-          let extractedText = result.text
-          resolver(extractedText)
+    onDeviceTextRecognizer.process(visionImage) { result, error in
+      guard error == nil, let result = result else {
+          rejecter("ERROR", "Failed to recognize text: \(error?.localizedDescription ?? "")", nil)
+          return
       }
+
+      var textOverlays: [[String: Any]] = []
+
+      // Loop through each block, line, and element to get the text and its frame
+      for block in result.blocks {
+          for line in block.lines {
+              for element in line.elements {
+                  // Create a dictionary for each piece of text including the text and its frame
+                  let textOverlay = [
+                      "text": element.text,
+                      "frame": [
+                          "x": element.frame.origin.x,
+                          "y": element.frame.origin.y,
+                          "width": element.frame.size.width,
+                          "height": element.frame.size.height
+                      ]
+                  ]
+                  // Add the dictionary to the array
+                  textOverlays.append(textOverlay)
+              }
+          }
+      }
+
+      // Resolve the promise with the array of text overlays
+      resolver(textOverlays)
+    }
   }
   
   @objc static func requiresMainQueueSetup() -> Bool {
