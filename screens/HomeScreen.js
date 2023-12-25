@@ -45,21 +45,33 @@ function HomeScreen({ navigation }) {
     if (!inSelectionMode || !hasSelectedDecks) return null;
 
     const handleDeleteSelected = () => {
-      // Implement deletion logic
+      selectedDecks.forEach((deckTitle) => {
+        // Dispatch deleteDeck action to delete the deck
+        dispatch(deleteDeck(deckTitle));
+
+        // Check if the deck is part of a topic
+        Object.keys(topics).forEach(topic => {
+          if (topics[topic].includes(deckTitle)) {
+            // Remove deck from topic
+            dispatch(removeDeckFromTopic(topic, deckTitle));
+
+            // Check if the topic is now empty
+            if (topics[topic].length === 1) {
+              // If empty, delete the topic
+              dispatch(deleteTopic(topic));
+            }
+          }
+        });
+      });
+
+      // Reset selection mode and selected decks
+      setSelectedDecks([]);
+      setSelectionMode(false);
     };
 
     const handleCreateNewTopic = () => {
       setShowTopicsModal(true);
     };
-
-    const handleMoveToTopic = () => {
-      // Implement move to topic logic
-    };
-
-    const handleCancel = () => {
-      setSelectionMode(false);
-      setSelectedDecks([]); // Deselect all items when cancelling
-    }
 
     return (
       <View style={styles.footerContainer}>
@@ -68,12 +80,6 @@ function HomeScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCreateNewTopic}>
           <Icon name="add-circle-outline" size={30} color="green" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleMoveToTopic}>
-          <Icon name="folder" size={30} color="blue" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCancel}>
-          <Icon name="cancel" size={30} color="red" />
         </TouchableOpacity>
       </View>
     );
@@ -102,14 +108,11 @@ function HomeScreen({ navigation }) {
   }, [navigation, inSelectionMode, decks.length]);
 
   const handleDeckPress = (deckTitle) => {
-    console.log('Deck Pressed:', deckTitle, 'In Selection Mode:', inSelectionMode);
     if (inSelectionMode) {
       let newSelectedDecks = selectedDecks.includes(deckTitle) 
         ? selectedDecks.filter(deck => deck !== deckTitle)
         : [...selectedDecks, deckTitle];
-      console.log('Before setSelectedDecks:', selectedDecks);
       setSelectedDecks(newSelectedDecks);
-      console.log('After setSelectedDecks:', newSelectedDecks);
     } else {
       navigation.navigate('DeckDetail', { deckName: deckTitle });
     }
@@ -486,7 +489,7 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#f7f7f7',

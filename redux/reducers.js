@@ -95,25 +95,41 @@ function decks(state = { decks: {}, topics: {} }, action) {
       break;
 
     case DELETE_DECK:
-      newState = { ...state };  // Copy the current state
-      delete newState.decks[action.deckTitle];  // Remove the specified deck from the 'decks' key
-    
-      // Also, remove the deck from all topics that reference it
-      Object.keys(newState.topics).forEach(topic => {
-        newState.topics[topic] = newState.topics[topic].filter(deck => deck !== action.deckTitle);
+      // Create a new copy of the decks, excluding the one to delete
+      const newDecks = { ...state.decks };
+      delete newDecks[action.deckTitle];  // Delete the specified deck
+
+      // Create a new copy of the topics, excluding the deck from each topic
+      const newTopicsAfterDeckDeletion = { ...state.topics };
+      Object.keys(newTopicsAfterDeckDeletion).forEach(topic => {
+        newTopicsAfterDeckDeletion[topic] = newTopicsAfterDeckDeletion[topic].filter(deck => deck !== action.deckTitle);
       });
+
+      // Update the state with the new decks and topics
+      newState = {
+        ...state,
+        decks: newDecks,
+        topics: newTopicsAfterDeckDeletion
+      };
       break;
 
     case DELETE_TOPIC:
-      newState = { ...state };  // Copy the current state
-    
-      // Delete all decks associated with the topic from the 'decks' key
-      newState.topics[action.topic].forEach(deckTitle => {
-        delete newState.decks[deckTitle];
+      // Create a new copy of decks, excluding those in the topic to be deleted
+      const remainingDecks = { ...state.decks };
+      state.topics[action.topic].forEach(deckTitle => {
+        delete remainingDecks[deckTitle];  // Remove each deck in the topic
       });
-    
-      // Remove the topic itself from the 'topics' key
-      delete newState.topics[action.topic];
+
+      // Create a new copy of topics, excluding the topic to delete
+      const remainingTopics = { ...state.topics };
+      delete remainingTopics[action.topic];  // Delete the topic
+
+      // Update the state with the remaining decks and topics
+      newState = {
+        ...state,
+        decks: remainingDecks,
+        topics: remainingTopics
+      };
       break;
       
     default:
