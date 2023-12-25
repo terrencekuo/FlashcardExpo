@@ -6,7 +6,7 @@ import {
   DELETE_DECK,
   DELETE_TOPIC,
   RESET_STATE
-} from '../actions/index';
+} from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Redux Reducers

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-import { selectDeckByName } from '../selectors/deckSelectors';
+import { selectDeckByName } from '../redux/selectors';
 
 function DeckDetailScreen({ navigation, route }) {
   const { deckName } = route.params;

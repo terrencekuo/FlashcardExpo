@@ -15,8 +15,8 @@ import {
   deleteDeck,
   deleteTopic,
   resetState
-} from '../actions';
-import { selectDecks } from '../selectors/deckSelectors';
+} from '../redux/actions';
+import { selectDecks } from '../redux/selectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import AsyncStorage from '@react-native-async-storage/async-storage';

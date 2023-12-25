@@ -8,7 +8,7 @@ import {
     Keyboard,
  } from 'react-native';  // Added Keyboard
 import { useDispatch } from 'react-redux';
-import { addCardToDeck } from '../actions';
+import { addCardToDeck } from '../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ImagePickerButton from '../components/ExtractTextFromImage';
 

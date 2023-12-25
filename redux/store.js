@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import decks from '../reducers';
+import decks from './reducers';
 
 // Redux Store
 //  the current redux app state lives in an object called `store`

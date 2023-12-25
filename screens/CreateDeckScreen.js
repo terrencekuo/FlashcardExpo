@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { addDeck } from '../actions/index';
+import { addDeck } from '../redux/actions';
 
 function CreateDeckScreen({ navigation }) {
   const [title, setTitle] = useState('');
