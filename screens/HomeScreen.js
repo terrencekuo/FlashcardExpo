@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+} from 'react';
 import {
   View,
   FlatList,
@@ -7,6 +11,7 @@ import {
   StyleSheet,
   Modal,
   TextInput,
+  Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -21,7 +26,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the Mater
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 function HomeScreen({ navigation }) {
   const decks = useSelector(selectDecks);
   const topics = useSelector((state) => state.topics || {});
@@ -34,6 +38,66 @@ function HomeScreen({ navigation }) {
   const [topicName, setTopicName] = useState('');
   const [showTopicsModal, setShowTopicsModal] = useState(false);
   const [showEmptyTextWarning, setShowEmptyTextWarning] = useState(false);
+  const slideAnim = useState(new Animated.Value(0))[0]; // Initial value for sliding
+
+  const toggleSlideAnimation = () => {
+    Animated.timing(slideAnim, {
+      toValue: inSelectionMode ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  useEffect(() => {
+    toggleSlideAnimation();
+  }, [inSelectionMode]);
+
+  // Update the navigation options
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => setSelectionMode(prevMode => !prevMode)}>
+          <Text style={{ marginRight: 15 }}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, inSelectionMode]);
+
+  const handleDeckPress = (deckTitle) => {
+    if (inSelectionMode) {
+      let newSelectedDecks = selectedDecks.includes(deckTitle) 
+        ? selectedDecks.filter(deck => deck !== deckTitle)
+        : [...selectedDecks, deckTitle];
+      setSelectedDecks(newSelectedDecks);
+    } else {
+      navigation.navigate('DeckDetail', { deckName: deckTitle });
+    }
+  };
+
+  const DeckItem = ({ deckTitle, isSelected, onPress, slideAnim }) => {
+    return (
+      <Animated.View
+        style={{
+          transform: [{ translateX: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 30] }) }],
+        }}
+      >
+        <TouchableOpacity
+          style={[
+            styles.deckItem,
+            { flexDirection: 'row', alignItems: 'center' }
+          ]}
+          onPress={onPress}
+        >
+          {inSelectionMode && (
+            <View style={styles.selectionCircle}>
+              <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
+            </View>
+          )}
+          <Text style={styles.deckTitle}>{deckTitle}</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   const handleGroupDecks = () => {
     setShowTopicsModal(true);
@@ -126,25 +190,13 @@ function HomeScreen({ navigation }) {
           {/* Display Topic Titles */}
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
-            <TouchableOpacity
+              <DeckItem 
               key={deckTitle}
-              style={[
-                styles.deckItem,
-                inSelectionMode && selectedDecks.includes(deckTitle) ? styles.selectedDeck : {},
-              ]}
-              onPress={() => {
-                if (inSelectionMode) {
-                  setSelectedDecks((prev) => {
-                    if (prev.includes(deckTitle)) return prev.filter((deck) => deck !== deckTitle);
-                    return [...prev, deckTitle];
-                  });
-                } else {
-                  navigation.navigate('DeckDetail', { deckName: deckTitle });
-                }
-              }}
-            >
-              <Text style={styles.deckTitle}>{deckTitle}</Text>
-            </TouchableOpacity>
+              deckTitle={deckTitle}
+              isSelected={inSelectionMode && selectedDecks.includes(deckTitle)}
+              onPress={() => handleDeckPress(deckTitle)}
+              slideAnim={slideAnim}
+            />
           ))}
         </Swipeable>
       ))}
@@ -163,24 +215,12 @@ function HomeScreen({ navigation }) {
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
           <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
-            <TouchableOpacity
-              style={[
-                styles.deckItem,
-                inSelectionMode && selectedDecks.includes(item.title) ? styles.selectedDeck : {},
-              ]}
-              onPress={() => {
-                if (inSelectionMode) {
-                  setSelectedDecks((prev) => {
-                    if (prev.includes(item.title)) return prev.filter((deck) => deck !== item.title);
-                    return [...prev, item.title];
-                  });
-                } else {
-                  navigation.navigate('DeckDetail', { deckName: item.title });
-                }
-              }}
-            >
-              <Text style={styles.deckTitle}>{item.title}</Text>
-            </TouchableOpacity>
+            <DeckItem 
+              deckTitle={item.title}
+              isSelected={inSelectionMode && selectedDecks.includes(item.title)}
+              onPress={() => handleDeckPress(item.title)}
+              slideAnim={slideAnim}
+            />
           </Swipeable>
         )}
       />
@@ -420,6 +460,9 @@ const styles = StyleSheet.create({
       backgroundColor: 'red',
       flex: 0.45,  // Adjust this to control the width
   },
+  selectionCircle: {
+    marginRight: 10,
+  }
 });
 
 export default HomeScreen;
