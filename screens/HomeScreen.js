@@ -93,11 +93,9 @@ function HomeScreen({ navigation }) {
   };
   
   useEffect(() => {
-    Animated.timing(slideAnim, {
-      toValue: inSelectionMode ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    toggleSlideAnimation();
+    // Cleanup function to stop the animation when component unmounts
+    return () => slideAnim.stopAnimation();
   }, [inSelectionMode]);
 
   // Update the navigation options
@@ -330,13 +328,6 @@ function HomeScreen({ navigation }) {
               <Icon name="delete" size={30} color="red" />
             </TouchableOpacity>
 
-            {/* Not in Selection Mode - Display Group Decks Icon */}
-            {decks.length > 0 && (
-              <TouchableOpacity style={styles.groupIconContainer} onPress={() => setSelectionMode(true)}>
-                <Icon name="group" size={30} color="white" />
-              </TouchableOpacity>
-            )}
-
             {/* FAB to add a new deck */}
             <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck')}>
               <Text style={styles.fabIcon}>+</Text>
@@ -393,12 +384,10 @@ const styles = StyleSheet.create({
   },
   fabContainer: {
     position: 'absolute',
-    right: 15,
+    right: 15, // Align to the right side
     bottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 200,
   },
   groupIconContainer: {
     backgroundColor: '#007BFF',
