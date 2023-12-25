@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, TextInput, Button } from 'react-native';
+import { View,
+    Text,
+    TouchableOpacity,
+    FlatList,
+    StyleSheet,
+    TextInput,
+    KeyboardAvoidingView,
+    Button } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteTopic, addTopic, addDeckToTopic } from '../redux/actions'; // Import actions
 
@@ -42,35 +49,40 @@ function TopicSelectionScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Existing Topics Section */}
-      <View style={styles.topicsBox}>
-        <Text style={styles.boxHeader}>Move to Existing Topic</Text>
-        <FlatList
-          data={Object.keys(topics)}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.topicItem} onPress={() => handleTopicSelect(item)}>
-              <Text style={styles.topicText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-      
-      {/* New Topic Creation Section */}
-      <View style={styles.newTopicBox}>
-        <Text style={styles.boxHeader}>Create New Topic</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter new topic name"
-            value={newTopicName}
-            onChangeText={setNewTopicName}
-          />
-          <Button title="Create" onPress={createNewTopic} />
+        <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+    >
+        <View style={styles.contentContainer}>
+        {/* Existing Topics Section */}
+        <View style={styles.topicsBox}>
+            <Text style={styles.boxHeader}>Move to Existing Topic</Text>
+            <FlatList
+            data={Object.keys(topics)}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+                <TouchableOpacity style={styles.topicItem} onPress={() => handleTopicSelect(item)}>
+                <Text style={styles.topicText}>{item}</Text>
+                </TouchableOpacity>
+            )}
+            />
         </View>
-      </View>
-    </View>
+        
+        {/* New Topic Creation Section */}
+        <View style={styles.newTopicBox}>
+            <Text style={styles.boxHeader}>Create New Topic</Text>
+            <View style={styles.inputContainer}>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter new topic name"
+                value={newTopicName}
+                onChangeText={setNewTopicName}
+            />
+            <Button title="Create" onPress={createNewTopic} />
+            </View>
+        </View>
+        </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -78,7 +90,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
+  },
+  contentContainer: {
+    paddingTop: 20,
+    paddingHorizontal: 20
   },
   topicsBox: {
     marginHorizontal: 20,
