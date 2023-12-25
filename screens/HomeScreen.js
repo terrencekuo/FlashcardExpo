@@ -69,16 +69,11 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity onPress={handleCreateNewTopic}>
           <Icon name="add-circle-outline" size={30} color="green" />
         </TouchableOpacity>
-        {Object.keys(topics).length > 0 && (
-          <TouchableOpacity onPress={handleMoveToTopic}>
-            <Icon name="folder" size={30} color="blue" />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.cancelIconContainer} onPress={() => {
-            setSelectionMode(false);
-            setSelectedDecks([]); // Deselect all items when cancelling
-        }}>
-            <Icon name="cancel" size={30} color="red" />
+        <TouchableOpacity onPress={handleMoveToTopic}>
+          <Icon name="folder" size={30} color="blue" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleCancel}>
+          <Icon name="cancel" size={30} color="red" />
         </TouchableOpacity>
       </View>
     );
@@ -499,8 +494,8 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly', // Adjust as needed
-    alignItems: 'center', // Ensure vertical alignment
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 15,
     backgroundColor: '#f7f7f7',
     borderTopColor: '#ddd',
