@@ -1,13 +1,34 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, TextInput, Button } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteTopic, addTopic, addDeckToTopic } from '../redux/actions'; // Import actions
 
 function TopicSelectionScreen({ route, navigation }) {
   const { selectedDecks, onTopicSelect } = route.params;
   const topics = useSelector(state => state.topics);
+  const dispatch = useDispatch();
   const [newTopicName, setNewTopicName] = useState('');
 
   const handleTopicSelect = (topicName, isNewTopic = false) => {
+    if (isNewTopic) {
+        dispatch(addTopic(topicName));
+    }
+
+    // Move selected decks to the chosen topic
+    selectedDecks.forEach(deckTitle => {
+        dispatch(addDeckToTopic(topicName, deckTitle));
+    });
+
+    // Check if any topic becomes empty after moving decks
+    const updatedTopics = { ...topics };
+    Object.keys(updatedTopics).forEach(topic => {
+        updatedTopics[topic] = updatedTopics[topic].filter(deckTitle => !selectedDecks.includes(deckTitle));
+        if (updatedTopics[topic].length === 0) {
+            // Delete empty topic
+            dispatch(deleteTopic(topic));
+        }
+    });
+
     onTopicSelect(topicName, isNewTopic);
     navigation.goBack();
   };

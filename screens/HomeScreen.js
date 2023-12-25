@@ -63,7 +63,7 @@ function HomeScreen({ navigation }) {
       setSelectedDecks([]);
       setSelectionMode(false);
     };
-    
+
     const handleCreateNewTopic = () => {
       navigation.navigate('TopicSelection', {
         selectedDecks,
