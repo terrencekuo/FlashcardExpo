@@ -9,9 +9,18 @@ export const DELETE_TOPIC = 'DELETE_TOPIC';
 export const INITIALIZE_DECKS = 'INITIALIZE_DECKS';
 export const RESET_STATE = 'RESET_STATE ';
 
+// Redux Actions
+//  an event describes something that has happened in an app
+//  actions contain a "type" field which is a descriptive name of the action
+//  actions can contain other fields for additional info
+//
+//  the functions below are "Action Creators" which create and returns
+//  an action object
+
 export function initializeDecksFromStorage() {
   return async (dispatch) => {
     try {
+      // get state from persistent storage
       const savedState = await AsyncStorage.getItem('appState');
       if (savedState) {
         dispatch({ type: INITIALIZE_DECKS, appState: JSON.parse(savedState) });

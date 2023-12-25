@@ -9,6 +9,12 @@ import {
 } from '../actions/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Redux Reducers
+//  this is a function that receives the current `state` and and `action obj`, decides
+//  how to update state, and returns the new state
+//  
+//  this is essentially an event listener which handles events based on recv actions
+
 // The initial state now has two top-level keys: 'decks' and 'topics'.
 // 'decks' will store all the individual decks, and 'topics' will store the associations between topics and decks.
 function decks(state = { decks: {}, topics: {} }, action) {

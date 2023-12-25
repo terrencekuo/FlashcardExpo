@@ -11,7 +11,12 @@ function AppInitializer({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // code here will run after render which in this case
+    // will be run after the app init
     dispatch(initializeDecksFromStorage());  // Use the new action creator
+
+    // debug: print current contents in store
+    // console.log(store.getState())
   }, []);
 
   return children;
