@@ -49,7 +49,11 @@ function HomeScreen({ navigation }) {
   };
   
   useEffect(() => {
-    toggleSlideAnimation();
+    Animated.timing(slideAnim, {
+      toValue: inSelectionMode ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }, [inSelectionMode]);
 
   // Update the navigation options
@@ -75,27 +79,27 @@ function HomeScreen({ navigation }) {
   };
 
   const DeckItem = ({ deckTitle, isSelected, onPress, slideAnim }) => {
+    // Animate the horizontal translation of the selection circle
+    const circleAnim = slideAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-30, 0] // Adjust these values as needed
+    });
+
     return (
-      <Animated.View
-        style={{
-          transform: [{ translateX: slideAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 30] }) }],
-        }}
+      <TouchableOpacity
+        style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]} // Adjust padding based on mode
+        onPress={onPress}
       >
-        <TouchableOpacity
-          style={[
-            styles.deckItem,
-            { flexDirection: 'row', alignItems: 'center' }
-          ]}
-          onPress={onPress}
-        >
-          {inSelectionMode && (
-            <View style={styles.selectionCircle}>
-              <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
-            </View>
-          )}
-          <Text style={styles.deckTitle}>{deckTitle}</Text>
-        </TouchableOpacity>
-      </Animated.View>
+        {inSelectionMode && (
+          <Animated.View style={[
+            styles.selectionCircle, 
+            { transform: [{ translateX: circleAnim }] }
+          ]}>
+            <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
+          </Animated.View>
+        )}
+        <Text style={styles.deckTitle}>{deckTitle}</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -324,8 +328,11 @@ const styles = StyleSheet.create({
   },
   deckItem: {
     padding: 15,
+    paddingLeft: 45,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   selectedDeck: {
     backgroundColor: '#E0E0E0',
@@ -462,6 +469,12 @@ const styles = StyleSheet.create({
   },
   selectionCircle: {
     marginRight: 10,
+    position: 'absolute',
+    left: 0, // Initially off-screen
+    justifyContent: 'center',
+    alignItems: 'center',
+    // Set size and other styles for the circle
+    zIndex: 1,
   }
 });
 
