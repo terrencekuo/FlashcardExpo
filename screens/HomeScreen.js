@@ -39,9 +39,9 @@ function HomeScreen({ navigation }) {
   const [showTopicsModal, setShowTopicsModal] = useState(false);
   const [showEmptyTextWarning, setShowEmptyTextWarning] = useState(false);
   const slideAnim = useState(new Animated.Value(0))[0]; // Initial value for sliding
-  const hasSelectedDecks = selectedDecks.length > 0;
 
   const Footer = () => {
+    const hasSelectedDecks = selectedDecks.length > 0;
     if (!inSelectionMode || !hasSelectedDecks) return null;
 
     const handleDeleteSelected = () => {
@@ -79,18 +79,11 @@ function HomeScreen({ navigation }) {
     );
   }
 
-  const toggleSlideAnimation = () => {
-    Animated.timing(slideAnim, {
-      toValue: inSelectionMode ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-  
   useEffect(() => {
-    toggleSlideAnimation();
-    // Cleanup function to stop the animation when component unmounts
-    return () => slideAnim.stopAnimation();
+    // This effect runs when 'inSelectionMode' changes.
+    if (!inSelectionMode) {
+      setSelectedDecks([]); // Reset the selected decks when exiting selection mode
+    }
   }, [inSelectionMode]);
 
   // Update the navigation options
@@ -109,39 +102,41 @@ function HomeScreen({ navigation }) {
   }, [navigation, inSelectionMode, decks.length]);
 
   const handleDeckPress = (deckTitle) => {
+    console.log('Deck Pressed:', deckTitle, 'In Selection Mode:', inSelectionMode);
     if (inSelectionMode) {
       let newSelectedDecks = selectedDecks.includes(deckTitle) 
         ? selectedDecks.filter(deck => deck !== deckTitle)
         : [...selectedDecks, deckTitle];
+      console.log('Before setSelectedDecks:', selectedDecks);
       setSelectedDecks(newSelectedDecks);
+      console.log('After setSelectedDecks:', newSelectedDecks);
     } else {
       navigation.navigate('DeckDetail', { deckName: deckTitle });
     }
   };
 
-  const DeckItem = ({ deckTitle, isSelected, onPress, slideAnim }) => {
-    // Animate the horizontal translation of the selection circle
-    const circleAnim = slideAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-30, 0] // Adjust these values as needed
-    });
-
+  const DeckItem = ({ deckTitle, isSelected, onPress }) => {
     return (
       <TouchableOpacity
-        style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]} // Adjust padding based on mode
-        onPress={onPress}
+          style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]}
+          onPress={() => onPress(deckTitle)}
       >
-        {inSelectionMode && (
-          <Animated.View style={[
-            styles.selectionCircle, 
-            { transform: [{ translateX: circleAnim }] }
-          ]}>
-            <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
-          </Animated.View>
-        )}
-        <Text style={styles.deckTitle}>{deckTitle}</Text>
+          {inSelectionMode && (
+              <View style={styles.selectionCircle}>
+                  <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
+              </View>
+          )}
+          <Text style={styles.deckTitle}>{deckTitle}</Text>
       </TouchableOpacity>
     );
+  };
+
+  const handleToggleSelection = (deckTitle) => {
+    if (selectedDecks.includes(deckTitle)) {
+      setSelectedDecks(selectedDecks.filter(title => title !== deckTitle));
+    } else {
+      setSelectedDecks([...selectedDecks, deckTitle]);
+    }
   };
 
   const handleSelectTopic = (selectedTopic) => {
@@ -232,11 +227,9 @@ function HomeScreen({ navigation }) {
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
               <DeckItem 
-              key={deckTitle}
               deckTitle={deckTitle}
               isSelected={inSelectionMode && selectedDecks.includes(deckTitle)}
               onPress={() => handleDeckPress(deckTitle)}
-              slideAnim={slideAnim}
             />
           ))}
         </Swipeable>
@@ -258,9 +251,8 @@ function HomeScreen({ navigation }) {
           <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
             <DeckItem 
               deckTitle={item.title}
-              isSelected={inSelectionMode && selectedDecks.includes(item.title)}
-              onPress={() => handleDeckPress(item.title)}
-              slideAnim={slideAnim}
+              isSelected={selectedDecks.includes(item.title)}
+              onPress={handleToggleSelection}
             />
           </Swipeable>
         )}
