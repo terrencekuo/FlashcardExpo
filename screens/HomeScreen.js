@@ -39,6 +39,50 @@ function HomeScreen({ navigation }) {
   const [showTopicsModal, setShowTopicsModal] = useState(false);
   const [showEmptyTextWarning, setShowEmptyTextWarning] = useState(false);
   const slideAnim = useState(new Animated.Value(0))[0]; // Initial value for sliding
+  const hasSelectedDecks = selectedDecks.length > 0;
+
+  const Footer = () => {
+    if (!inSelectionMode || !hasSelectedDecks) return null;
+
+    const handleDeleteSelected = () => {
+      // Implement deletion logic
+    };
+
+    const handleCreateNewTopic = () => {
+      setShowTopicsModal(true);
+    };
+
+    const handleMoveToTopic = () => {
+      // Implement move to topic logic
+    };
+
+    const handleCancel = () => {
+      setSelectionMode(false);
+      setSelectedDecks([]); // Deselect all items when cancelling
+    }
+
+    return (
+      <View style={styles.footerContainer}>
+        <TouchableOpacity onPress={handleDeleteSelected}>
+          <Icon name="delete" size={30} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleCreateNewTopic}>
+          <Icon name="add-circle-outline" size={30} color="green" />
+        </TouchableOpacity>
+        {Object.keys(topics).length > 0 && (
+          <TouchableOpacity onPress={handleMoveToTopic}>
+            <Icon name="folder" size={30} color="blue" />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity style={styles.cancelIconContainer} onPress={() => {
+            setSelectionMode(false);
+            setSelectedDecks([]); // Deselect all items when cancelling
+        }}>
+            <Icon name="cancel" size={30} color="red" />
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const toggleSlideAnimation = () => {
     Animated.timing(slideAnim, {
@@ -58,14 +102,18 @@ function HomeScreen({ navigation }) {
 
   // Update the navigation options
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => setSelectionMode(prevMode => !prevMode)}>
-          <Text style={{ marginRight: 15 }}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, inSelectionMode]);
+    if (decks.length > 0) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => setSelectionMode(prevMode => !prevMode)}>
+            <Text style={{ marginRight: 15 }}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
+          </TouchableOpacity>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: null });
+    }
+  }, [navigation, inSelectionMode, decks.length]);
 
   const handleDeckPress = (deckTitle) => {
     if (inSelectionMode) {
@@ -101,10 +149,6 @@ function HomeScreen({ navigation }) {
         <Text style={styles.deckTitle}>{deckTitle}</Text>
       </TouchableOpacity>
     );
-  };
-
-  const handleGroupDecks = () => {
-    setShowTopicsModal(true);
   };
 
   const handleSelectTopic = (selectedTopic) => {
@@ -275,23 +319,12 @@ function HomeScreen({ navigation }) {
           </View>
       </Modal>
 
-      <View style={styles.fabContainer}>
-        {/* In Selection Mode - Display Confirm and Cancel Icons */}
-        {inSelectionMode ? (
-          <>
-            <TouchableOpacity style={styles.confirmIconContainer} onPress={handleGroupDecks}>
-                <Icon name="check-circle" size={30} color="green" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.cancelIconContainer} onPress={() => {
-                setSelectionMode(false);
-                setSelectedDecks([]); // Deselect all items when cancelling
-            }}>
-                <Icon name="cancel" size={30} color="red" />
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
+      {inSelectionMode && (
+        // Footer appears when in selection mode
+        <Footer/>
+      )}
+      {!inSelectionMode && (
+        <View style={styles.fabContainer}>
             {/* Clear Storage Button */}
             <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
               <Icon name="delete" size={30} color="red" />
@@ -308,9 +341,8 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck')}>
               <Text style={styles.fabIcon}>+</Text>
             </TouchableOpacity>
-          </>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -475,7 +507,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // Set size and other styles for the circle
     zIndex: 1,
-  }
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly', // Adjust as needed
+    alignItems: 'center', // Ensure vertical alignment
+    padding: 15,
+    backgroundColor: '#f7f7f7',
+    borderTopColor: '#ddd',
+    borderTopWidth: 1,
+  },
 });
 
 export default HomeScreen;
