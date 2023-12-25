@@ -16,7 +16,7 @@ function AppInitializer({ children }) {
     dispatch(initializeDecksFromStorage());  // Use the new action creator
 
     // debug: print current contents in store
-    // console.log(store.getState())
+    console.log(store.getState())
   }, []);
 
   return children;

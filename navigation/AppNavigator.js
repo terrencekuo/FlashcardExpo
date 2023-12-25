@@ -5,6 +5,7 @@ import CreateDeckScreen from '../screens/CreateDeckScreen';
 import CreateFlashcardScreen from '../screens/CreateFlashcardScreen';
 import StudyScreen from '../screens/StudyScreen';
 import DeckDetailScreen from '../screens/DeckDetailScreen';
+import TopicSelectionScreen from '../screens/TopicSelectionScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ function AppNavigator() {
       <Stack.Screen name="CreateFlashcard" component={CreateFlashcardScreen} />
       <Stack.Screen name="Study" component={StudyScreen} />
       <Stack.Screen name="DeckDetail" component={DeckDetailScreen} />
+      <Stack.Screen name="TopicSelection" component={TopicSelectionScreen} />
     </Stack.Navigator>
   );
 }

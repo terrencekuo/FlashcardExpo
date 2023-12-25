@@ -34,11 +34,6 @@ function HomeScreen({ navigation }) {
   // Local state to manage selection mode
   const [inSelectionMode, setSelectionMode] = useState(false);
   const [selectedDecks, setSelectedDecks] = useState([]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [topicName, setTopicName] = useState('');
-  const [showTopicsModal, setShowTopicsModal] = useState(false);
-  const [showEmptyTextWarning, setShowEmptyTextWarning] = useState(false);
-  const slideAnim = useState(new Animated.Value(0))[0]; // Initial value for sliding
 
   const Footer = () => {
     const hasSelectedDecks = selectedDecks.length > 0;
@@ -68,9 +63,23 @@ function HomeScreen({ navigation }) {
       setSelectedDecks([]);
       setSelectionMode(false);
     };
-
+    
     const handleCreateNewTopic = () => {
-      setShowTopicsModal(true);
+      navigation.navigate('TopicSelection', {
+        selectedDecks,
+        onTopicSelect: (topicName, isNewTopic = false) => {
+          if (isNewTopic) {
+            // Logic for creating a new topic
+            dispatch(addTopic(topicName));
+          }
+          // Logic to move selected decks to the chosen existing or new topic
+          selectedDecks.forEach((deckTitle) => {
+            dispatch(addDeckToTopic(topicName, deckTitle));
+          });
+          setSelectedDecks([]);
+          setSelectionMode(false);
+        }
+      });
     };
 
     return (
@@ -118,11 +127,19 @@ function HomeScreen({ navigation }) {
     }
   };
 
-  const DeckItem = ({ deckTitle, isSelected, onPress }) => {
+  const DeckItem = ({ deckTitle, isSelected, onPress, inSelectionMode }) => {
+    const handlePress = () => {
+      if (inSelectionMode) {
+          onPress(deckTitle); // handleToggleSelection when in selection mode
+      } else {
+          handleDeckPress(deckTitle); // navigate to DeckDetail when not in selection mode
+      }
+    };
+
     return (
       <TouchableOpacity
           style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]}
-          onPress={() => onPress(deckTitle)}
+          onPress={handlePress}
       >
           {inSelectionMode && (
               <View style={styles.selectionCircle}>
@@ -140,46 +157,6 @@ function HomeScreen({ navigation }) {
     } else {
       setSelectedDecks([...selectedDecks, deckTitle]);
     }
-  };
-
-  const handleSelectTopic = (selectedTopic) => {
-      if (selectedTopic === '<Create new topic>') {
-          setShowTopicsModal(false);  // Close the topics modal first
-          setTimeout(() => setModalVisible(true), 300);  // Delay the opening of the next modal to prevent flashing
-      } else {
-          selectedDecks.forEach((deckTitle) => {
-              dispatch(addDeckToTopic(selectedTopic, deckTitle));
-          });
-          setSelectedDecks([]);
-          setShowTopicsModal(false);
-      }
-  };
-
-  const cancelTopicCreation = () => {
-      setModalVisible(false);
-      setTopicName('');  // Clear the text box
-      setShowEmptyTextWarning(false);  // Reset the warning
-  };
-
-  const confirmGrouping = () => {
-      if (!topicName.trim()) {
-          setShowEmptyTextWarning(true);
-          return;
-      }
-      dispatch(addTopic(topicName));
-      selectedDecks.forEach((deckTitle) => {
-          dispatch(addDeckToTopic(topicName, deckTitle));
-      });
-      setSelectedDecks([]);
-      setSelectionMode(false);
-      setModalVisible(false);
-      setTopicName('');  // Reset the topic name after confirming
-      setShowEmptyTextWarning(false);  // Reset the warning
-  };
-
-  const cancelGrouping = () => {
-    setShowTopicsModal(false);
-    setSelectedDecks([]);  // Reset the selected decks
   };
 
   const renderRightAction = (onDelete) => (
@@ -229,10 +206,12 @@ function HomeScreen({ navigation }) {
           {/* Display Topic Titles */}
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
-              <DeckItem 
+            <DeckItem 
+              key={deckTitle}
               deckTitle={deckTitle}
-              isSelected={inSelectionMode && selectedDecks.includes(deckTitle)}
-              onPress={() => handleDeckPress(deckTitle)}
+              isSelected={selectedDecks.includes(deckTitle)}
+              onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
+              inSelectionMode={inSelectionMode}
             />
           ))}
         </Swipeable>
@@ -255,57 +234,12 @@ function HomeScreen({ navigation }) {
             <DeckItem 
               deckTitle={item.title}
               isSelected={selectedDecks.includes(item.title)}
-              onPress={handleToggleSelection}
+              onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
+              inSelectionMode={inSelectionMode}
             />
           </Swipeable>
         )}
       />
-
-      <Modal animationType="slide" visible={showTopicsModal}>
-          <View style={styles.modalContainer}>
-              {Object.keys(topics).map((topic) => (
-                  <TouchableOpacity key={topic} style={styles.topicItem} onPress={() => handleSelectTopic(topic)}>
-                      <Text>{topic}</Text>
-                  </TouchableOpacity>
-              ))}
-              
-              <View style={styles.modalButtonContainer}>
-                  <TouchableOpacity style={styles.modalButton} onPress={() => handleSelectTopic('<Create new topic>')}>
-                      <Text>Create new topic</Text>
-                  </TouchableOpacity>
-                  
-                  {/* Cancel Button */}
-                  <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelGrouping}>
-                      <Text>Cancel</Text>
-                  </TouchableOpacity>
-              </View>
-          </View>
-      </Modal>
-  
-      {/* Modal for topic name input */}
-      <Modal animationType="slide" visible={isModalVisible}>
-          <View style={styles.modalContainer}>
-              <TextInput
-                  style={styles.input}
-                  placeholder="Enter topic name"
-                  value={topicName}
-                  onChangeText={(text) => {
-                      setTopicName(text);
-                      setShowEmptyTextWarning(false);  // Reset the warning when the user starts typing
-                  }}
-              />
-              {showEmptyTextWarning && <Text style={{ color: 'red', marginBottom: 10 }}>Please enter a topic name.</Text>}
-              <View style={styles.modalButtonContainer}>
-                  <TouchableOpacity style={styles.modalButton} onPress={confirmGrouping}>
-                      <Text>Confirm</Text>
-                  </TouchableOpacity>
-                  {/* Cancel Button */}
-                  <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={cancelTopicCreation}>
-                      <Text>Cancel</Text>
-                  </TouchableOpacity>
-              </View>
-          </View>
-      </Modal>
 
       {inSelectionMode && (
         // Footer appears when in selection mode
