@@ -7,6 +7,7 @@ import {
     StyleSheet,
     Keyboard,
 } from 'react-native';  // Added Keyboard
+import { CommonActions } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -52,9 +53,21 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         setSides(defaultSides);
     };
 
+    // reset the route so that user can't go back after creating a deck
+    const navigateToFlashcards = () => {
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    { name: 'Flashcards', params: { backTitle: 'CreateFlashcard' } },
+                ],
+            })
+        );
+    };
+
     // Navigation function to return to the home screen
     const handleStartStudying = () => {
-        navigation.navigate('Flashcards', { backTitle: 'CreateFlashcard' });
+        navigateToFlashcards()
     };
 
     return (
