@@ -140,12 +140,14 @@ function HomeScreen({ navigation }) {
 
     return (
       <TouchableOpacity
-        style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]}
+        style={[styles.deckItem, inSelectionMode && styles.deckItemInSelection]}
         onPress={handlePress}
       >
         {inSelectionMode && (
           <View style={styles.selectionCircle}>
-            <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
+            <Icon
+              name={isSelected ? "radio-button-checked" : "radio-button-unchecked"}
+              style={styles.selectionCircleIcon} />
           </View>
         )}
         <Text style={styles.deckTitle}>
@@ -214,7 +216,7 @@ function HomeScreen({ navigation }) {
       {standaloneDecks.length > 0 && (
         <View style={styles.standaloneDeckContainer}>
           <Text style={styles.standaloneDeckHeader}>Standalone Decks</Text>
-          <Text style={styles.standaloneDeckDescription}>Decks without a topic</Text>
+          <Text style={styles.standaloneDeckDescription}>Uncategorized Decks</Text>
         </View>
       )}
 
@@ -279,7 +281,6 @@ const styles = StyleSheet.create({
   },
   deckItem: {
     padding: 15,
-    paddingLeft: 45,
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
     flexDirection: 'row',
@@ -435,6 +436,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     flex: 0.45,  // Adjust this to control the width
   },
+  deckItemInSelection: {
+    paddingLeft: 45, // This will be used when in selection mode
+  },
   selectionCircle: {
     marginRight: 10,
     position: 'absolute',
@@ -443,6 +447,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // Set size and other styles for the circle
     zIndex: 1,
+    color: "#534A4A",
+    width: 24, // Match the size of the icon for a full circle
+    height: 24,
+    borderRadius: 12,
   },
   footerContainer: {
     flexDirection: 'row',
