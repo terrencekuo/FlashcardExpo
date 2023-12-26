@@ -20,7 +20,14 @@ function StudyScreen({ route, navigation }) {
   if (cards.length === 0) {
     return (
       <View style={styles.container}>
-        <Text>There are no cards in this deck.</Text>
+        <View style={styles.titleContainer}>
+          <CommunityIcon name="cards-outline" style={styles.cardIcon} />
+          <Text style={styles.customHeader}>{deckName}</Text>
+        </View>
+        <View style={styles.noCardsContainer}>
+          <Text style={styles.noCardsText}>There are no cards in this deck.</Text>
+        </View>
+
       </View>
     );
   }
@@ -90,7 +97,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   card: {
-    width: '100%', height: 300, backgroundColor: '#f7f7f7',
+    width: '100%',
+    height: 300,
+    backgroundColor: '#f7f7f7',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -111,6 +120,24 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white', // Same text color as in DeckInfoScreen
     fontSize: 16 // Same font size
+  },
+  noCardsContainer: {
+    marginHorizontal: 20,
+    padding: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+    height: 300, // Set a fixed height to allow for vertical centering
+    alignItems: 'center', // Center content horizontally
+    justifyContent: 'center', // Center content vertically
+  },
+  noCardsText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#555', // A mild color that matches the theme
+    textAlign: 'center', // Center align the text
+    marginBottom: 10,
   },
 });
 
