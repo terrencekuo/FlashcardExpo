@@ -251,7 +251,7 @@ function HomeScreen({ navigation }) {
 
           {/* FAB to add a new deck */}
           <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
-            <Text style={styles.fabIcon}>+</Text>
+            <AntDesign name="addfile" style={styles.addFileIcon} />
           </TouchableOpacity>
         </View>
       )}
@@ -320,6 +320,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Aligns the button to the bottom-right
     paddingBottom: Platform.OS === 'ios' ? 40 : 30, // Additional padding for ergonomic positioning
     paddingRight: 20, // Right padding for ergonomic reach
+  },
+  addFileIcon: {
+    fontSize: 24, // Size of the icon
+    color: 'white', // Color of the icon
   },
   groupIconContainer: {
     backgroundColor: '#007BFF',
