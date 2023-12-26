@@ -19,7 +19,8 @@ import {
   addDeckToTopic,
   deleteDeck,
   deleteTopic,
-  resetState
+  resetState,
+  removeDeckFromTopic,
 } from '../redux/actions';
 import { selectDecks } from '../redux/selectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons

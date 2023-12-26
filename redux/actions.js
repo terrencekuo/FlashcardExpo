@@ -8,6 +8,7 @@ export const DELETE_DECK = 'DELETE_DECK';
 export const DELETE_TOPIC = 'DELETE_TOPIC';
 export const INITIALIZE_DECKS = 'INITIALIZE_DECKS';
 export const RESET_STATE = 'RESET_STATE ';
+export const REMOVE_DECK_FROM_TOPIC = 'REMOVE_DECK_FROM_TOPIC';
 
 // Redux Actions
 //  an event describes something that has happened in an app
@@ -77,6 +78,14 @@ export function deleteTopic(topic) {
   return {
     type: DELETE_TOPIC,
     topic,
+  };
+}
+
+export function removeDeckFromTopic(topicName, deckTitle) {
+  return {
+    type: REMOVE_DECK_FROM_TOPIC,
+    topicName,
+    deckTitle,
   };
 }
 

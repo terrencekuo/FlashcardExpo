@@ -5,7 +5,8 @@ import {
   ADD_DECK_TO_TOPIC,
   DELETE_DECK,
   DELETE_TOPIC,
-  RESET_STATE
+  RESET_STATE,
+  REMOVE_DECK_FROM_TOPIC,
 } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -131,6 +132,17 @@ function decks(state = { decks: {}, topics: {} }, action) {
         topics: remainingTopics
       };
       break;
+
+    case REMOVE_DECK_FROM_TOPIC:
+      newState = {
+        ...state,
+        topics: {
+          ...state.topics,
+          [action.topicName]: state.topics[action.topicName].filter(
+            deckTitle => deckTitle !== action.deckTitle
+          ),
+        },
+      };
 
     default:
       return state;
