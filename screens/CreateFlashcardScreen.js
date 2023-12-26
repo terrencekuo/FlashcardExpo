@@ -11,6 +11,7 @@ import { CommonActions } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePickerButton from '../components/ExtractTextFromImage';
 
 const CardTypeEnum = {
@@ -72,9 +73,13 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.customHeader}>Create Flashcard</Text>
+            <View style={styles.titleContainer}>
+                <CommunityIcon name="cards-outline" style={styles.cardIcon} />
+                <Text style={styles.customHeader}>{deckName}</Text>
+            </View>
             <KeyboardAwareScrollView style={styles.keyboardAwareScrollView}>
                 <View style={styles.newDeckBox}>
+                    <Text style={styles.sideTitle}>Create Flashcard</Text>
                     {/* Render each side input */}
                     {sides.map((side, index) => (
                         <View key={index} style={styles.sideContainer}>
@@ -115,9 +120,15 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
+    titleContainer: {
+        flexDirection: 'row', // Align items horizontally
+        alignItems: 'center', // Center items vertically
+        paddingHorizontal: 15,
+    },
+    cardIcon: {
+        fontSize: 34, // Adjust icon size
+        color: '#534A4A', // Adjust icon color
+        marginRight: 10, // Spacing between icon and text
     },
     customHeader: {
         fontSize: 34,
@@ -125,14 +136,24 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 15,
         color: "#534A4A",
-        paddingHorizontal: 15,
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
     },
     keyboardAwareScrollView: {
         paddingHorizontal: 20,
     },
+    sideTitle: {
+        fontSize: 28,
+        marginBottom: 10,
+        color: '#55527C',
+        fontWeight: 'bold',
+    },
     sideLabel: {
         fontSize: 18,
         marginBottom: 5,
+        color: '#534A4A',
     },
     button: {
         padding: 10,
