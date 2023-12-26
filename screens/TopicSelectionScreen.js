@@ -9,6 +9,7 @@ import {
     KeyboardAvoidingView,
     Button
 } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteTopic, addTopic, addDeckToTopic } from '../redux/actions'; // Import actions
 
@@ -51,28 +52,34 @@ function TopicSelectionScreen({ route, navigation }) {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.container}
-        >
-            <View style={styles.contentContainer}>
-                {/* Existing Topics Section */}
+        <View style={styles.container}>
+            <Text style={styles.customHeader}>Categorize Decks</Text>
+
+            {/* Existing Topics Section */}
+            {Object.keys(topics).length > 0 && (
                 <View style={styles.topicsBox}>
-                    <Text style={styles.boxHeader}>Move to Existing Topic</Text>
+                    <Text style={styles.boxHeader}>Move Deck to Existing Folder</Text>
                     <FlatList
                         data={Object.keys(topics)}
                         keyExtractor={(item) => item}
                         renderItem={({ item }) => (
                             <TouchableOpacity style={styles.topicItem} onPress={() => handleTopicSelect(item)}>
-                                <Text style={styles.topicText}>{item}</Text>
+                                <Text style={styles.topicText}>
+                                    <AntDesign name="folder1" style={styles.folderIcon} /> {item}
+                                </Text>
                             </TouchableOpacity>
                         )}
                     />
                 </View>
+            )}
 
-                {/* New Topic Creation Section */}
+            {/* New Topic Creation Section */}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.keyboardAvoidingContainer}
+            >
                 <View style={styles.newTopicBox}>
-                    <Text style={styles.boxHeader}>Create New Topic</Text>
+                    <Text style={styles.boxHeader}>Create New Folder</Text>
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -80,15 +87,25 @@ function TopicSelectionScreen({ route, navigation }) {
                             value={newTopicName}
                             onChangeText={setNewTopicName}
                         />
-                        <Button title="Create" onPress={createNewTopic} />
+                        <TouchableOpacity onPress={createNewTopic} style={styles.customButton}>
+                            <Text style={styles.customButtonText}>Create</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    customHeader: {
+        fontSize: 34,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 15,
+        color: "#534A4A",
+        paddingHorizontal: 15,
+    },
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
@@ -118,6 +135,20 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         textAlign: 'center',
+        color: "#534A4A",
+    },
+    customButton: {
+        backgroundColor: '#B89081',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    customButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    keyboardAvoidingContainer: {
+        flex: 1,
     },
     topicItem: {
         padding: 15,
