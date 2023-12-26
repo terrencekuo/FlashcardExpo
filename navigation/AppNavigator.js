@@ -16,6 +16,8 @@ function AppNavigator() {
       screenOptions={{
         headerStyle: {
           backgroundColor: '#f5f5f5',
+          shadowColor: 'transparent',
+          elevation: 0,
         },
         headerTintColor: '#B89081',
         headerTitleStyle: {

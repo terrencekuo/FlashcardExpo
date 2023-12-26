@@ -23,6 +23,8 @@ import {
 } from '../redux/actions';
 import { selectDecks } from '../redux/selectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }) {
@@ -85,10 +87,10 @@ function HomeScreen({ navigation }) {
     return (
       <View style={styles.footerContainer}>
         <TouchableOpacity onPress={handleDeleteSelected}>
-          <Icon name="delete" size={30} color="red" />
+          <Icon name="delete" style={styles.deleteIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCreateNewTopic}>
-          <Icon name="add-circle-outline" size={30} color="green" />
+          <Icon name="add-circle-outline" style={styles.addIcon} />
         </TouchableOpacity>
       </View>
     );
@@ -146,7 +148,9 @@ function HomeScreen({ navigation }) {
             <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
           </View>
         )}
-        <Text style={styles.deckTitle}>{deckTitle}</Text>
+        <Text style={styles.deckTitle}>
+          <CommunityIcon name="cards-outline" style={styles.cardIcon} /> {deckTitle}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -186,11 +190,14 @@ function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.customHeader}>Flashcards</Text>
       {/* Displaying Topics and their respective Decks */}
       {Object.keys(topics).map((topic) => (
         <View key={topic}>
           {/* Display Topic Titles */}
-          <Text style={styles.topicTitle}>{topic}</Text>
+          <Text style={styles.topicTitle}>
+            <AntDesign name="folder1" style={styles.folderIcon} /> {topic}
+          </Text>
           {topics[topic].map((deckTitle) => (
             <DeckItem
               key={deckTitle}
@@ -251,6 +258,13 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  customHeader: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 15,
+    color: "#534A4A",
+  },
   container: {
     flex: 1,
     paddingHorizontal: 15,
@@ -315,6 +329,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 8,
     marginRight: 5,
+  },
+  deleteIcon: {
+    fontSize: 30,
+    color: 'red',
+  },
+  addIcon: {
+    fontSize: 30,
+    color: 'green',
+  },
+  folderIcon: {
+    fontSize: 22,
+    color: '#000', // or any other color you prefer
+  },
+  cardIcon: {
+    fontSize: 15,
+    color: '#000', // or any other color you prefer
   },
   fab: {
     backgroundColor: '#B89081',
