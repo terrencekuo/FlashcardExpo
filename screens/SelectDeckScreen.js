@@ -7,10 +7,10 @@ function SelectDeckScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f5f5', }}>
-      <FlatList 
+      <FlatList
         data={decks}
         renderItem={({ item }) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={{ padding: 20, borderBottomWidth: 1, borderBottomColor: 'gray' }}
             onPress={() => navigation.navigate('Study', { deckName: item.title, backTitle: 'SelectDeck' })}
           >

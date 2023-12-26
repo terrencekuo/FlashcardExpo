@@ -27,42 +27,42 @@ function AppNavigator() {
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}
-        />
+      />
       <Stack.Screen
         name="CreateDeck"
         component={CreateDeckScreen}
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}
-        />
+      />
       <Stack.Screen
         name="CreateFlashcard"
         component={CreateFlashcardScreen}
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}
-        />
+      />
       <Stack.Screen
         name="Study"
         component={StudyScreen}
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}
-        />
+      />
       <Stack.Screen
         name="DeckDetail"
         component={DeckDetailScreen}
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}
-        />
+      />
       <Stack.Screen
         name="TopicSelection"
         component={TopicSelectionScreen}
         options={({ route, navigation }) => ({
           headerBackTitle: route.params.backTitle,
         })}
-        />
+      />
     </Stack.Navigator>
   );
 }

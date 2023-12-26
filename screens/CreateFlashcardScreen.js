@@ -6,7 +6,7 @@ import {
     Button,
     StyleSheet,
     Keyboard,
- } from 'react-native';  // Added Keyboard
+} from 'react-native';  // Added Keyboard
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../redux/actions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -15,7 +15,7 @@ import ImagePickerButton from '../components/ExtractTextFromImage';
 const CardTypeEnum = {
     CUSTOM: 'Custom',
     CHINESE: 'Chinese',
-  };
+};
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName } = route.params;
@@ -80,7 +80,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                     />
                 </View>
             ))}
-  
+
             {/* Footer buttons */}
             <View style={styles.bottomSection}>
                 <Button title="Start Studying" onPress={handleStartStudying} />

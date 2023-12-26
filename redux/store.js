@@ -10,7 +10,7 @@ import decks from './reducers';
 //  state and it takes in a `action obj`, and runs the reducer func
 //
 
-const store = configureStore ({
+const store = configureStore({
     reducer: decks
 });
 

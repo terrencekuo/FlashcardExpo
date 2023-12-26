@@ -58,22 +58,22 @@ function decks(state = { decks: {}, topics: {} }, action) {
       };
       break;
 
-      case ADD_TOPIC:
-        if (!action.topicName.trim()) {
-            console.warn("Topic name cannot be empty.");
-            return state;
+    case ADD_TOPIC:
+      if (!action.topicName.trim()) {
+        console.warn("Topic name cannot be empty.");
+        return state;
+      }
+      newState = {
+        ...state,
+        topics: {
+          ...state.topics,
+          [action.topicName]: []
         }
-        newState = {
-            ...state,
-            topics: {
-                ...state.topics,
-                [action.topicName]: []
-            }
-        };
-        break;
+      };
+      break;
 
     case ADD_DECK_TO_TOPIC:
-      if(!state.topics[action.topicName]) {
+      if (!state.topics[action.topicName]) {
         // Handle error: Topic does not exist
         console.error("Topic does not exist.");
         return state;
@@ -131,7 +131,7 @@ function decks(state = { decks: {}, topics: {} }, action) {
         topics: remainingTopics
       };
       break;
-      
+
     default:
       return state;
   }

@@ -119,35 +119,35 @@ function HomeScreen({ navigation }) {
 
   const handleDeckPress = (deckTitle) => {
     if (inSelectionMode) {
-      let newSelectedDecks = selectedDecks.includes(deckTitle) 
+      let newSelectedDecks = selectedDecks.includes(deckTitle)
         ? selectedDecks.filter(deck => deck !== deckTitle)
         : [...selectedDecks, deckTitle];
       setSelectedDecks(newSelectedDecks);
     } else {
-      navigation.navigate('DeckDetail', { deckName: deckTitle, backTitle: 'Flashcards'  });
+      navigation.navigate('DeckDetail', { deckName: deckTitle, backTitle: 'Flashcards' });
     }
   };
 
   const DeckItem = ({ deckTitle, isSelected, onPress, inSelectionMode }) => {
     const handlePress = () => {
       if (inSelectionMode) {
-          onPress(deckTitle); // handleToggleSelection when in selection mode
+        onPress(deckTitle); // handleToggleSelection when in selection mode
       } else {
-          handleDeckPress(deckTitle); // navigate to DeckDetail when not in selection mode
+        handleDeckPress(deckTitle); // navigate to DeckDetail when not in selection mode
       }
     };
 
     return (
       <TouchableOpacity
-          style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]}
-          onPress={handlePress}
+        style={[styles.deckItem, { paddingLeft: inSelectionMode ? 45 : 15 }]}
+        onPress={handlePress}
       >
-          {inSelectionMode && (
-              <View style={styles.selectionCircle}>
-                  <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
-              </View>
-          )}
-          <Text style={styles.deckTitle}>{deckTitle}</Text>
+        {inSelectionMode && (
+          <View style={styles.selectionCircle}>
+            <Icon name={isSelected ? "radio-button-checked" : "radio-button-unchecked"} size={24} />
+          </View>
+        )}
+        <Text style={styles.deckTitle}>{deckTitle}</Text>
       </TouchableOpacity>
     );
   };
@@ -207,7 +207,7 @@ function HomeScreen({ navigation }) {
           {/* Display Topic Titles */}
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
-            <DeckItem 
+            <DeckItem
               key={deckTitle}
               deckTitle={deckTitle}
               isSelected={selectedDecks.includes(deckTitle)}
@@ -232,7 +232,7 @@ function HomeScreen({ navigation }) {
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
           <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
-            <DeckItem 
+            <DeckItem
               deckTitle={item.title}
               isSelected={selectedDecks.includes(item.title)}
               onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
@@ -244,21 +244,21 @@ function HomeScreen({ navigation }) {
 
       {inSelectionMode && (
         // Footer appears when in selection mode
-        <Footer/>
+        <Footer />
       )}
       {!inSelectionMode && (
         <View style={styles.fabContainer}>
-            {/* Clear Storage Button - Debug only */}
-            {/*
+          {/* Clear Storage Button - Debug only */}
+          {/*
             <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
               <Icon name="delete" size={30} color="red" />
             </TouchableOpacity>
             */}
 
-            {/* FAB to add a new deck */}
-            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
-              <Text style={styles.fabIcon}>+</Text>
-            </TouchableOpacity>
+          {/* FAB to add a new deck */}
+          <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
+            <Text style={styles.fabIcon}>+</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -405,16 +405,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modalButton: {
-      flex: 0.45,  // Adjust this to control the width
-      padding: 15,
-      backgroundColor: '#007BFF',
-      borderRadius: 8,
-      alignItems: 'center',
-      margin: 5,   // Add some margin around the buttons
+    flex: 0.45,  // Adjust this to control the width
+    padding: 15,
+    backgroundColor: '#007BFF',
+    borderRadius: 8,
+    alignItems: 'center',
+    margin: 5,   // Add some margin around the buttons
   },
   cancelButton: {
-      backgroundColor: 'red',
-      flex: 0.45,  // Adjust this to control the width
+    backgroundColor: 'red',
+    flex: 0.45,  // Adjust this to control the width
   },
   selectionCircle: {
     marginRight: 10,

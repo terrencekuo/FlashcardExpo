@@ -18,15 +18,15 @@ function DeckDetailScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{deck.title}</Text>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Study', { deckName: deck.title, backTitle: 'DeckDetail' })}
       >
         <Text style={styles.buttonText}>Start Studying</Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={[styles.button, styles.buttonSecondary]}
         onPress={() => navigation.navigate('CreateFlashcard', { deckName: deck.title, backTitle: 'DeckDetail' })}
       >
