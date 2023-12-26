@@ -4,7 +4,7 @@ import HomeScreen from '../screens/HomeScreen';
 import CreateDeckScreen from '../screens/CreateDeckScreen';
 import CreateFlashcardScreen from '../screens/CreateFlashcardScreen';
 import StudyScreen from '../screens/StudyScreen';
-import DeckDetailScreen from '../screens/DeckDetailScreen';
+import DeckInfoScreen from '../screens/DeckInfoScreen';
 import TopicSelectionScreen from '../screens/TopicSelectionScreen';
 
 const Stack = createStackNavigator();
@@ -56,7 +56,7 @@ function AppNavigator() {
       />
       <Stack.Screen
         name="DeckDetail"
-        component={DeckDetailScreen}
+        component={DeckInfoScreen}
         options={({ route }) => ({
           headerBackTitle: route.params?.backTitle || '',
         })}

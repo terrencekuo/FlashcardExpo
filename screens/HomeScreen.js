@@ -199,7 +199,7 @@ function HomeScreen({ navigation }) {
         <View key={topic}>
           {/* Display Topic Titles */}
           <View style={styles.topicContainer}>
-            < AntDesign name="folder1" style={styles.folderIcon} />
+            <AntDesign name="folder1" style={styles.folderIcon} />
             <Text style={styles.topicTitle}>{topic}</Text>
           </View>
 
