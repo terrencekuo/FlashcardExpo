@@ -133,6 +133,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                 {/* Section to display current flashcards */}
                 {flashcards && flashcards.length > 0 && (
                     <View style={styles.flashcardsListContainer}>
+                        <Text style={styles.sideTitle}>Deck Flashcards</Text>
                         <FlatList
                             data={flashcards}
                             keyExtractor={(item, index) => `flashcard-${index}`}
@@ -194,9 +195,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     sideContainer: {
-        // flexDirection: 'row',
-        // alignItems: 'center',
-        // justifyContent: 'space-between',  // Pushes children to the edges
         marginBottom: 15,
     },
     input: {
@@ -222,9 +220,10 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     flashcardsListContainer: {
-        marginTop: 10,
+        marginHorizontal: 5,
+        marginTop: 35,
         marginBottom: 20,
-        padding: 10,
+        padding: 15,
         backgroundColor: '#fff',
         borderRadius: 10,
         borderWidth: 1,
