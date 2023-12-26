@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
 import { useDispatch } from 'react-redux';
 import { addDeck } from '../redux/actions';
 
 function CreateDeckScreen({ navigation }) {
   const [title, setTitle] = useState('');
-  const [showError, setShowError] = useState(false);  // State to control the visibility of the error message
+  const [showError, setShowError] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -20,17 +28,58 @@ function CreateDeckScreen({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f5f5', }}>
-      <TextInput
-        style={{ borderWidth: 1, padding: 10, width: '80%', marginBottom: 20 }}
-        placeholder="Enter deck title"
-        value={title}
-        onChangeText={setTitle}
-      />
-      {showError && <Text style={{ color: 'red', marginBottom: 10 }}>Deck name cannot be empty.</Text>}
-      <Button title="Create Deck" onPress={handleSubmit} />
-    </View>
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter deck title"
+          value={title}
+          onChangeText={setTitle}
+        />
+        {showError && <Text style={styles.errorText}>Deck name cannot be empty.</Text>}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Create Deck</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  input: {
+    borderWidth: 1,
+    padding: 10,
+    width: '80%',
+    marginBottom: 20,
+  },
+  errorText: {
+    color: '#F8485E',
+    marginBottom: 10,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '80%',
+    backgroundColor: '#B89081',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+  },
+});
 
 export default CreateDeckScreen;

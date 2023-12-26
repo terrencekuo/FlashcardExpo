@@ -17,7 +17,10 @@ function AppNavigator() {
         headerStyle: {
           backgroundColor: '#f5f5f5',
         },
-        headerTintColor: '#333',
+        headerTintColor: '#B89081',
+        headerTitleStyle: {
+          color: '#B89081',
+        },
         headerTitle: ' ',
       }}
     >

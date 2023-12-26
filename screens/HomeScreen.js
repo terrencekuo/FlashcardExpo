@@ -23,7 +23,6 @@ import {
 } from '../redux/actions';
 import { selectDecks } from '../redux/selectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }) {
@@ -108,7 +107,7 @@ function HomeScreen({ navigation }) {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity onPress={() => setSelectionMode(prevMode => !prevMode)}>
-            <Text style={{ marginRight: 15 }}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
+            <Text style={styles.editButtonText}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
           </TouchableOpacity>
         ),
       });
@@ -160,20 +159,6 @@ function HomeScreen({ navigation }) {
     }
   };
 
-  const renderRightAction = (onDelete) => (
-    <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
-      <Text style={styles.deleteText}>Delete</Text>
-    </TouchableOpacity>
-  );
-
-  const handleDeleteDeck = (deckTitle) => {
-    dispatch(deleteDeck(deckTitle));  // Dispatch deleteDeck action to delete the deck
-  };
-
-  const handleDeleteTopic = (topic) => {
-    dispatch(deleteTopic(topic));  // Dispatch deleteTopic action to delete the topic
-  };
-
   // Get all deck titles that are associated with any topic
   const getDecksInTopics = () => {
     let decksInTopics = [];
@@ -203,7 +188,7 @@ function HomeScreen({ navigation }) {
     <View style={styles.container}>
       {/* Displaying Topics and their respective Decks */}
       {Object.keys(topics).map((topic) => (
-        <Swipeable key={topic} renderRightActions={() => renderRightAction(() => handleDeleteTopic(topic))}>
+        <View key={topic}>
           {/* Display Topic Titles */}
           <Text style={styles.topicTitle}>{topic}</Text>
           {topics[topic].map((deckTitle) => (
@@ -215,7 +200,7 @@ function HomeScreen({ navigation }) {
               inSelectionMode={inSelectionMode}
             />
           ))}
-        </Swipeable>
+        </View>
       ))}
 
       {/* Header for Standalone Decks */}
@@ -231,14 +216,14 @@ function HomeScreen({ navigation }) {
         data={standaloneDecks}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
-          <Swipeable renderRightActions={() => renderRightAction(() => handleDeleteDeck(item.title))}>
+          <View>
             <DeckItem
               deckTitle={item.title}
               isSelected={selectedDecks.includes(item.title)}
               onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
               inSelectionMode={inSelectionMode}
             />
-          </Swipeable>
+          </View>
         )}
       />
 
@@ -276,6 +261,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+    color: "#534A4A",
   },
   deckItem: {
     padding: 15,
@@ -313,9 +299,12 @@ const styles = StyleSheet.create({
   fabContainer: {
     position: 'absolute',
     right: 15, // Align to the right side
-    bottom: 15,
+    bottom: 15, // Distance from the bottom
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end', // Aligns the button to the bottom-right
+    paddingBottom: Platform.OS === 'ios' ? 30 : 20, // Additional padding for ergonomic positioning
+    paddingRight: 20, // Right padding for ergonomic reach
   },
   groupIconContainer: {
     backgroundColor: '#007BFF',
@@ -388,7 +377,7 @@ const styles = StyleSheet.create({
   standaloneDeckHeader: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#007BFF',
+    color: '#55527C',
   },
   standaloneDeckDescription: {
     fontSize: 12,
@@ -433,6 +422,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     borderTopColor: '#ddd',
     borderTopWidth: 1,
+  },
+  editButtonText: {
+    marginRight: 15,
+    color: '#B89081', // Replace with your desired color
   },
 });
 
