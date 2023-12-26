@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectDeckByName } from '../redux/selectors';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function StudyScreen({ route, navigation }) {
   const { deckName } = route.params;
@@ -43,28 +44,53 @@ function StudyScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.card} onPress={handleFlipCard}>
-        <Text>{currentCard.sides[showSide].value}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleNextCard}>
-        <Text>Next Card</Text>
-      </TouchableOpacity>
+      <View style={styles.titleContainer}>
+        <CommunityIcon name="cards-outline" style={styles.cardIcon} />
+        <Text style={styles.customHeader}>{deckName}</Text>
+      </View>
+
+      <View style={styles.newDeckBox}>
+        <TouchableOpacity style={styles.card} onPress={handleFlipCard}>
+          <Text>{currentCard.sides[showSide].value}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleNextCard}>
+          <Text style={styles.buttonText}>Next Card</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    flexDirection: 'row', // Align items horizontally
+    alignItems: 'center', // Center items vertically
+    paddingHorizontal: 15,
+  },
+  cardIcon: {
+    fontSize: 34, // Adjust icon size
+    color: '#534A4A', // Adjust icon color
+    marginRight: 10, // Spacing between icon and text
+  },
+  customHeader: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 15,
+    color: "#534A4A",
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  newDeckBox: {
+    marginHorizontal: 20,
+    borderColor: '#ddd',
+    padding: 15,
+    marginTop: 20,
+  },
   card: {
-    width: '100%',
-    height: 300,
-    backgroundColor: '#f7f7f7',
+    width: '100%', height: 300, backgroundColor: '#f7f7f7',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -75,9 +101,16 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   button: {
-    padding: 10,
-    backgroundColor: 'lightblue',
-    borderRadius: 5,
+    backgroundColor: '#B89081', // Same background color as in DeckInfoScreen
+    padding: 15, // Same padding
+    borderRadius: 5, // Same border radius
+    width: '100%', // Full width
+    alignItems: 'center', // Center text horizontally
+    marginBottom: 15, // Margin at the bottom
+  },
+  buttonText: {
+    color: 'white', // Same text color as in DeckInfoScreen
+    fontSize: 16 // Same font size
   },
 });
 
