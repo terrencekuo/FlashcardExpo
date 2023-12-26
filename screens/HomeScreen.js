@@ -42,23 +42,32 @@ function HomeScreen({ navigation }) {
     if (!inSelectionMode || !hasSelectedDecks) return null;
 
     const handleDeleteSelected = () => {
+      // Create a map to count decks in each topic after deletions
+      let topicDeckCount = new Map();
+
+      // Initialize the count for each topic
+      Object.keys(topics).forEach(topic => {
+        topicDeckCount.set(topic, topics[topic].length);
+      });
+
       selectedDecks.forEach((deckTitle) => {
         // Dispatch deleteDeck action to delete the deck
         dispatch(deleteDeck(deckTitle));
 
-        // Check if the deck is part of a topic
+        // Update the count of decks in each topic
         Object.keys(topics).forEach(topic => {
           if (topics[topic].includes(deckTitle)) {
-            // Remove deck from topic
-            dispatch(removeDeckFromTopic(topic, deckTitle));
-
-            // Check if the topic is now empty
-            if (topics[topic].length === 1) {
-              // If empty, delete the topic
-              dispatch(deleteTopic(topic));
-            }
+            let currentCount = topicDeckCount.get(topic);
+            topicDeckCount.set(topic, currentCount - 1);
           }
         });
+      });
+
+      // Now check which topics need to be deleted
+      topicDeckCount.forEach((count, topic) => {
+        if (count === 0) {
+          dispatch(deleteTopic(topic));
+        }
       });
 
       // Reset selection mode and selected decks
