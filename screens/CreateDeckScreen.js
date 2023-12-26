@@ -16,11 +16,11 @@ function CreateDeckScreen({ navigation }) {
     }
     dispatch(addDeck(title));
     setTitle('');
-    navigation.navigate('CreateFlashcard', { deckName: title });
+    navigation.navigate('CreateFlashcard', { deckName: title, backTitle: 'CreateDeck' });
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f5f5', }}>
       <TextInput
         style={{ borderWidth: 1, padding: 10, width: '80%', marginBottom: 20 }}
         placeholder="Enter deck title"

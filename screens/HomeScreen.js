@@ -78,7 +78,8 @@ function HomeScreen({ navigation }) {
           });
           setSelectedDecks([]);
           setSelectionMode(false);
-        }
+        },
+        backTitle: 'Flashcards'
       });
     };
 
@@ -123,7 +124,7 @@ function HomeScreen({ navigation }) {
         : [...selectedDecks, deckTitle];
       setSelectedDecks(newSelectedDecks);
     } else {
-      navigation.navigate('DeckDetail', { deckName: deckTitle });
+      navigation.navigate('DeckDetail', { deckName: deckTitle, backTitle: 'Flashcards'  });
     }
   };
 
@@ -247,13 +248,15 @@ function HomeScreen({ navigation }) {
       )}
       {!inSelectionMode && (
         <View style={styles.fabContainer}>
-            {/* Clear Storage Button */}
+            {/* Clear Storage Button - Debug only */}
+            {/*
             <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
               <Icon name="delete" size={30} color="red" />
             </TouchableOpacity>
+            */}
 
             {/* FAB to add a new deck */}
-            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck')}>
+            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
               <Text style={styles.fabIcon}>+</Text>
             </TouchableOpacity>
         </View>
@@ -266,6 +269,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
+    backgroundColor: '#f5f5f5',
   },
   topicTitle: {
     fontSize: 22,
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   fab: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#B89081',
     borderRadius: 30,
     width: 60,
     height: 60,

@@ -21,14 +21,14 @@ function DeckDetailScreen({ navigation, route }) {
       
       <TouchableOpacity 
         style={styles.button}
-        onPress={() => navigation.navigate('Study', { deckName: deck.title })}
+        onPress={() => navigation.navigate('Study', { deckName: deck.title, backTitle: 'DeckDetail' })}
       >
         <Text style={styles.buttonText}>Start Studying</Text>
       </TouchableOpacity>
       
       <TouchableOpacity 
         style={[styles.button, styles.buttonSecondary]}
-        onPress={() => navigation.navigate('CreateFlashcard', { deckName: deck.title })}
+        onPress={() => navigation.navigate('CreateFlashcard', { deckName: deck.title, backTitle: 'DeckDetail' })}
       >
         <Text style={styles.buttonText}>Add Cards</Text>
       </TouchableOpacity>
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,

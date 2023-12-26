@@ -11,13 +11,58 @@ const Stack = createStackNavigator();
 
 function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="CreateDeck" component={CreateDeckScreen} />
-      <Stack.Screen name="CreateFlashcard" component={CreateFlashcardScreen} />
-      <Stack.Screen name="Study" component={StudyScreen} />
-      <Stack.Screen name="DeckDetail" component={DeckDetailScreen} />
-      <Stack.Screen name="TopicSelection" component={TopicSelectionScreen} />
+    <Stack.Navigator
+      initialRouteName="Flashcards"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f5f5f5',
+        },
+        headerTintColor: '#333',
+        headerTitle: ' ',
+      }}
+    >
+      <Stack.Screen
+        name="Flashcards"
+        component={HomeScreen}
+        options={({ route }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+        />
+      <Stack.Screen
+        name="CreateDeck"
+        component={CreateDeckScreen}
+        options={({ route }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+        />
+      <Stack.Screen
+        name="CreateFlashcard"
+        component={CreateFlashcardScreen}
+        options={({ route }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+        />
+      <Stack.Screen
+        name="Study"
+        component={StudyScreen}
+        options={({ route }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+        />
+      <Stack.Screen
+        name="DeckDetail"
+        component={DeckDetailScreen}
+        options={({ route }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+        />
+      <Stack.Screen
+        name="TopicSelection"
+        component={TopicSelectionScreen}
+        options={({ route, navigation }) => ({
+          headerBackTitle: route.params.backTitle,
+        })}
+        />
     </Stack.Navigator>
   );
 }

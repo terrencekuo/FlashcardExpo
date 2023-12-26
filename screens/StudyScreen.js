@@ -37,7 +37,7 @@ function StudyScreen({ route, navigation }) {
       setCurrentCardIndex(currentCardIndex + 1);
       setShowSide(0);
     } else {
-      navigation.navigate('Home');
+      navigation.navigate('Flashcards', { backTitle: 'Study' });
     }
   };
 
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   card: {
     width: '100%',

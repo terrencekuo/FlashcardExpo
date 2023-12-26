@@ -54,7 +54,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
     // Navigation function to return to the home screen
     const handleStartStudying = () => {
-        navigation.navigate('Home');
+        navigation.navigate('Flashcards', { backTitle: 'CreateFlashcard' });
     };
 
     return (
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        backgroundColor: '#f5f5f5',
     },
     sideContainer: {
         flexDirection: 'row',
