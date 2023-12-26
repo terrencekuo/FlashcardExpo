@@ -1,4 +1,8 @@
-import React, { useState, useRef } from 'react';  // Added useRef
+import React, {
+    useState,
+    useRef,
+    useLayoutEffect,
+} from 'react';  // Added useRef
 import {
     View,
     Text,
@@ -69,10 +73,17 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         );
     };
 
-    // Navigation function to return to the home screen
-    const handleStartStudying = () => {
-        navigateToFlashcards()
-    };
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => navigateToFlashcards()}
+                    style={{ marginRight: 10 }}>
+                    <Text style={styles.doneButton}>Done</Text>
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation]);
 
     // Fetch the flashcards for the specific deck
     const flashcards = useSelector(state => selectFlashcardsByDeck(state, deckName));
@@ -119,9 +130,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
                     {/* Footer buttons */}
                     <View style={styles.bottomSection}>
-                        <TouchableOpacity onPress={handleStartStudying} style={styles.button}>
-                            <Text style={styles.buttonText}>Start Studying</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity onPress={handleAddCard} style={styles.button}>
                             <Text style={styles.buttonText}>Add Flash Card</Text>
                         </TouchableOpacity>
@@ -240,5 +248,9 @@ const styles = StyleSheet.create({
     cardSideText: {
         fontSize: 16,
         color: '#333',
+    },
+    doneButton: {
+        marginRight: 15,
+        color: '#B89081', // Replace with your desired color
     },
 });
