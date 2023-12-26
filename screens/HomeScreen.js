@@ -87,10 +87,10 @@ function HomeScreen({ navigation }) {
     return (
       <View style={styles.footerContainer}>
         <TouchableOpacity onPress={handleDeleteSelected}>
-          <Icon name="delete" style={styles.deleteIcon} />
+          <AntDesign name="delete" style={styles.deleteIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCreateNewTopic}>
-          <Icon name="add-circle-outline" style={styles.addIcon} />
+          <AntDesign name="addfolder" style={styles.addIcon} />
         </TouchableOpacity>
       </View>
     );
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end', // Aligns the button to the bottom-right
-    paddingBottom: Platform.OS === 'ios' ? 30 : 20, // Additional padding for ergonomic positioning
+    paddingBottom: Platform.OS === 'ios' ? 40 : 30, // Additional padding for ergonomic positioning
     paddingRight: 20, // Right padding for ergonomic reach
   },
   groupIconContainer: {
@@ -333,11 +333,11 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     fontSize: 30,
-    color: 'red',
+    color: '#F8485E',
   },
   addIcon: {
     fontSize: 30,
-    color: 'green',
+    color: '#B89081',
   },
   folderIcon: {
     fontSize: 22,
@@ -460,6 +460,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     borderTopColor: '#ddd',
     borderTopWidth: 1,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 30,
   },
   editButtonText: {
     marginRight: 15,
