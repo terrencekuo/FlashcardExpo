@@ -74,40 +74,41 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         <View style={styles.container}>
             <Text style={styles.customHeader}>Create Flashcard</Text>
             <KeyboardAwareScrollView style={styles.keyboardAwareScrollView}>
-                {/* Render each side input */}
-                {sides.map((side, index) => (
-                    <View key={index} style={styles.sideContainer}>
-                        <Text style={styles.sideLabel}>{side.label}</Text>
-                        <TextInput
-                            ref={inputRefs.current[index]}
-                            style={styles.input}
-                            value={side.value}
-                            onChangeText={(text) => handleSideChange(text, index)}
-                            placeholder={`Enter ${side.label}`}
-                            onSubmitEditing={() => {
-                                if (index < sides.length - 1) {
-                                    inputRefs.current[index + 1].current.focus();
-                                } else {
-                                    Keyboard.dismiss();
-                                }
-                            }}
-                            returnKeyType={index < sides.length - 1 ? "next" : "done"}
-                        />
+                <View style={styles.newDeckBox}>
+                    {/* Render each side input */}
+                    {sides.map((side, index) => (
+                        <View key={index} style={styles.sideContainer}>
+                            <Text style={styles.sideLabel}>{side.label}</Text>
+                            <TextInput
+                                ref={inputRefs.current[index]}
+                                style={styles.input}
+                                value={side.value}
+                                onChangeText={(text) => handleSideChange(text, index)}
+                                placeholder={`Enter ${side.label}`}
+                                onSubmitEditing={() => {
+                                    if (index < sides.length - 1) {
+                                        inputRefs.current[index + 1].current.focus();
+                                    } else {
+                                        Keyboard.dismiss();
+                                    }
+                                }}
+                                returnKeyType={index < sides.length - 1 ? "next" : "done"}
+                            />
+                        </View>
+                    ))}
+
+                    {/* Footer buttons */}
+                    <View style={styles.bottomSection}>
+                        <TouchableOpacity onPress={handleStartStudying} style={styles.button}>
+                            <Text style={styles.buttonText}>Start Studying</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleAddCard} style={styles.button}>
+                            <Text style={styles.buttonText}>Add Flash Card</Text>
+                        </TouchableOpacity>
+                        {/* TODO: bring back image picker */}
+                        {/* <ImagePickerButton></ImagePickerButton> */}
                     </View>
-                ))}
-
-                {/* Footer buttons */}
-                <View style={styles.bottomSection}>
-                    <TouchableOpacity onPress={handleStartStudying} style={styles.button}>
-                        <Text style={styles.buttonText}>Start Studying</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleAddCard} style={styles.button}>
-                        <Text style={styles.buttonText}>Add Flash Card</Text>
-                    </TouchableOpacity>
-                    {/* TODO: bring back image picker */}
-                    {/* <ImagePickerButton></ImagePickerButton> */}
                 </View>
-
             </KeyboardAwareScrollView>
         </View>
     );
@@ -162,6 +163,15 @@ const styles = StyleSheet.create({
     bottomSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginTop: 5,
+    },
+    newDeckBox: {
+        marginHorizontal: 5,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: 15,
+        backgroundColor: '#fff',
         marginTop: 5,
     },
 });
