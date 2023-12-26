@@ -198,28 +198,35 @@ function HomeScreen({ navigation }) {
       {Object.keys(topics).map((topic) => (
         <View key={topic}>
           {/* Display Topic Titles */}
-          <Text style={styles.topicTitle}>
-            <AntDesign name="folder1" style={styles.folderIcon} /> {topic}
-          </Text>
-          {topics[topic].map((deckTitle) => (
-            <DeckItem
-              key={deckTitle}
-              deckTitle={deckTitle}
-              isSelected={selectedDecks.includes(deckTitle)}
-              onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
-              inSelectionMode={inSelectionMode}
-            />
-          ))}
+          <View style={styles.topicContainer}>
+            < AntDesign name="folder1" style={styles.folderIcon} />
+            <Text style={styles.topicTitle}>{topic}</Text>
+          </View>
+
+          {
+            topics[topic].map((deckTitle) => (
+              <DeckItem
+                key={deckTitle}
+                deckTitle={deckTitle}
+                isSelected={selectedDecks.includes(deckTitle)}
+                onPress={inSelectionMode ? handleToggleSelection : handleDeckPress}
+                inSelectionMode={inSelectionMode}
+              />
+            ))
+          }
         </View>
-      ))}
+      ))
+      }
 
       {/* Header for Standalone Decks */}
-      {standaloneDecks.length > 0 && (
-        <View style={styles.standaloneDeckContainer}>
-          <Text style={styles.standaloneDeckHeader}>Standalone Decks</Text>
-          <Text style={styles.standaloneDeckDescription}>Uncategorized Decks</Text>
-        </View>
-      )}
+      {
+        standaloneDecks.length > 0 && (
+          <View style={styles.standaloneDeckContainer}>
+            <Text style={styles.standaloneDeckHeader}>Standalone Decks</Text>
+            <Text style={styles.standaloneDeckDescription}>Uncategorized Decks</Text>
+          </View>
+        )
+      }
 
       {/* Displaying Standalone Decks */}
       <FlatList
@@ -237,26 +244,30 @@ function HomeScreen({ navigation }) {
         )}
       />
 
-      {inSelectionMode && (
-        // Footer appears when in selection mode
-        <Footer />
-      )}
-      {!inSelectionMode && (
-        <View style={styles.fabContainer}>
-          {/* Clear Storage Button - Debug only */}
-          {/*
+      {
+        inSelectionMode && (
+          // Footer appears when in selection mode
+          <Footer />
+        )
+      }
+      {
+        !inSelectionMode && (
+          <View style={styles.fabContainer}>
+            {/* Clear Storage Button - Debug only */}
+            {/*
             <TouchableOpacity style={styles.clearStorageIconContainer} onPress={clearStorage}>
               <Icon name="delete" size={30} color="red" />
             </TouchableOpacity>
             */}
 
-          {/* FAB to add a new deck */}
-          <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
-            <AntDesign name="addfile" style={styles.addFileIcon} />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+            {/* FAB to add a new deck */}
+            <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateDeck', { backTitle: 'Flashcards' })}>
+              <AntDesign name="addfile" style={styles.addFileIcon} />
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    </View >
   );
 }
 
@@ -344,9 +355,21 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#B89081',
   },
+  topicContainer: {
+    flexDirection: 'row', // Align items in a row
+    alignItems: 'center', // Center items vertically
+    marginTop: 10,
+    marginBottom: 5,
+  },
   folderIcon: {
     fontSize: 22,
     color: '#000', // or any other color you prefer
+    marginRight: 10,
+  },
+  topicTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: "#534A4A",
   },
   cardIcon: {
     fontSize: 15,
