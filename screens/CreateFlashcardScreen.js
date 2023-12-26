@@ -3,7 +3,7 @@ import {
     View,
     Text,
     TextInput,
-    Button,
+    TouchableOpacity,
     StyleSheet,
     Keyboard,
 } from 'react-native';  // Added Keyboard
@@ -71,50 +71,84 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     };
 
     return (
-        <KeyboardAwareScrollView style={styles.container}>
-            {/* Render each side input */}
-            {sides.map((side, index) => (
-                <View key={index} style={styles.sideContainer}>
-                    <Text>{side.label}</Text>
-                    <TextInput
-                        ref={inputRefs.current[index]}
-                        style={styles.input}
-                        value={side.value}
-                        onChangeText={(text) => handleSideChange(text, index)}
-                        placeholder={`Enter ${side.label}`}
-                        onSubmitEditing={() => {
-                            if (index < sides.length - 1) {
-                                inputRefs.current[index + 1].current.focus();
-                            } else {
-                                Keyboard.dismiss();
-                            }
-                        }}
-                        returnKeyType={index < sides.length - 1 ? "next" : "done"}
-                    />
+        <View style={styles.container}>
+            <Text style={styles.customHeader}>Create Flashcard</Text>
+            <KeyboardAwareScrollView style={styles.keyboardAwareScrollView}>
+                {/* Render each side input */}
+                {sides.map((side, index) => (
+                    <View key={index} style={styles.sideContainer}>
+                        <Text style={styles.sideLabel}>{side.label}</Text>
+                        <TextInput
+                            ref={inputRefs.current[index]}
+                            style={styles.input}
+                            value={side.value}
+                            onChangeText={(text) => handleSideChange(text, index)}
+                            placeholder={`Enter ${side.label}`}
+                            onSubmitEditing={() => {
+                                if (index < sides.length - 1) {
+                                    inputRefs.current[index + 1].current.focus();
+                                } else {
+                                    Keyboard.dismiss();
+                                }
+                            }}
+                            returnKeyType={index < sides.length - 1 ? "next" : "done"}
+                        />
+                    </View>
+                ))}
+
+                {/* Footer buttons */}
+                <View style={styles.bottomSection}>
+                    <TouchableOpacity onPress={handleStartStudying} style={styles.button}>
+                        <Text style={styles.buttonText}>Start Studying</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleAddCard} style={styles.button}>
+                        <Text style={styles.buttonText}>Add Flash Card</Text>
+                    </TouchableOpacity>
+                    {/* TODO: bring back image picker */}
+                    {/* <ImagePickerButton></ImagePickerButton> */}
                 </View>
-            ))}
 
-            {/* Footer buttons */}
-            <View style={styles.bottomSection}>
-                <Button title="Start Studying" onPress={handleStartStudying} />
-                <Button title="Add Flash Card" onPress={handleAddCard} />
-                <ImagePickerButton></ImagePickerButton>
-            </View>
-
-        </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: '#f5f5f5',
     },
-    sideContainer: {
-        flexDirection: 'row',
+    customHeader: {
+        fontSize: 34,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 15,
+        color: "#534A4A",
+        paddingHorizontal: 15,
+    },
+    keyboardAwareScrollView: {
+        paddingHorizontal: 20,
+    },
+    sideLabel: {
+        fontSize: 18,
+        marginBottom: 5,
+    },
+    button: {
+        padding: 10,
+        borderRadius: 5,
         alignItems: 'center',
-        justifyContent: 'space-between',  // Pushes children to the edges
+        backgroundColor: '#B89081',
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    sideContainer: {
+        // flexDirection: 'row',
+        // alignItems: 'center',
+        // justifyContent: 'space-between',  // Pushes children to the edges
         marginBottom: 15,
     },
     input: {
@@ -126,13 +160,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,  // Adds some spacing between the Text and TextInput
     },
     bottomSection: {
-        marginTop: 'auto',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-    },
-    bottomSection: {
-        marginTop: 'auto',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginTop: 5,
     },
 });
