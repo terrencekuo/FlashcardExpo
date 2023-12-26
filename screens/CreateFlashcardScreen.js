@@ -6,12 +6,15 @@ import {
     TouchableOpacity,
     StyleSheet,
     Keyboard,
+    FlatList,
 } from 'react-native';  // Added Keyboard
 import { CommonActions } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { addCardToDeck } from '../redux/actions';
+import { selectFlashcardsByDeck } from '../redux/selectors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSelector } from 'react-redux';
 import ImagePickerButton from '../components/ExtractTextFromImage';
 
 const CardTypeEnum = {
@@ -71,6 +74,18 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         navigateToFlashcards()
     };
 
+    // Fetch the flashcards for the specific deck
+    const flashcards = useSelector(state => selectFlashcardsByDeck(state, deckName));
+
+    // Render Item for FlatList
+    const renderItem = ({ item }) => (
+        <View style={styles.cardItem}>
+            {item.sides.map((side, index) => (
+                <Text key={index} style={styles.cardSideText}>{side.label}: {side.value}</Text>
+            ))}
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -114,6 +129,17 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                         {/* <ImagePickerButton></ImagePickerButton> */}
                     </View>
                 </View>
+
+                {/* Section to display current flashcards */}
+                {flashcards && flashcards.length > 0 && (
+                    <View style={styles.flashcardsListContainer}>
+                        <FlatList
+                            data={flashcards}
+                            keyExtractor={(item, index) => `flashcard-${index}`}
+                            renderItem={renderItem}
+                        />
+                    </View>
+                )}
             </KeyboardAwareScrollView>
         </View>
     );
@@ -194,5 +220,26 @@ const styles = StyleSheet.create({
         padding: 15,
         backgroundColor: '#fff',
         marginTop: 5,
+    },
+    flashcardsListContainer: {
+        marginTop: 10,
+        marginBottom: 20,
+        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    cardItem: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        backgroundColor: '#f7f7f7',
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    cardSideText: {
+        fontSize: 16,
+        color: '#333',
     },
 });

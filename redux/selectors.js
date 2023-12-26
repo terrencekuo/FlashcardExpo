@@ -32,3 +32,10 @@ export const selectDeckByName = createSelector(
   [getDeckByName], // Input selectors
   (deck) => deck // Result function
 );
+
+// This selector retrieves all flashcards for a specific deck.
+// It uses the selectDeckByName selector to get the deck object and then extracts the cards array from it.
+export const selectFlashcardsByDeck = createSelector(
+  [selectDeckByName], // Use the existing selectDeckByName selector
+  (deck) => deck ? deck.cards : [] // Extract the cards array from the deck object
+);
