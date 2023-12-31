@@ -24,6 +24,7 @@ function AppNavigator() {
           color: '#B89081',
         },
         headerTitle: ' ',
+        headerShadowVisible: false,
       }}
     >
       <Stack.Screen
