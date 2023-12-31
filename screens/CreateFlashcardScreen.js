@@ -19,12 +19,8 @@ import { selectFlashcardsByDeck } from '../redux/selectors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
+import { CardTypeEnum } from '../utils/constants';
 import ImagePickerButton from '../components/ExtractTextFromImage';
-
-const CardTypeEnum = {
-    CUSTOM: 'Custom',
-    CHINESE: 'Chinese',
-};
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName } = route.params;
