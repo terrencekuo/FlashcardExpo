@@ -35,7 +35,11 @@ function DeckInfoScreen({ navigation, route }) {
 
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => navigation.navigate('CreateFlashcard', { deckName: deck.title, backTitle: 'DeckDetail' })}
+          onPress={() => navigation.navigate('CreateFlashcard', {
+            deckName: deck.title,
+            cardType: deck.cardInfo.cardType,
+            backTitle: 'DeckDetail'
+          })}
         >
           <Text style={styles.buttonText}>Add Cards</Text>
         </TouchableOpacity>

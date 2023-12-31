@@ -41,6 +41,7 @@ function decks(state = { decks: {}, topics: {} }, action) {
           [action.title]: {  // Add a new deck with the given title
             title: action.title,  // Set the title of the new deck
             cards: [],  // Initialize an empty array for cards
+            cardInfo: action.cardInfo
           },
         },
       };

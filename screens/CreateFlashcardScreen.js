@@ -19,20 +19,18 @@ import { selectFlashcardsByDeck } from '../redux/selectors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
-import { CardTypeEnum } from '../utils/constants';
+import {
+    getCardInfo,
+} from '../utils/constants';
 import ImagePickerButton from '../components/ExtractTextFromImage';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
-    const { deckName } = route.params;
+    const { deckName, cardType } = route.params;
     const dispatch = useDispatch();
+    const theCardInfo = getCardInfo(cardType)
 
     // Default sides for the flashcard
-    const defaultSides = [
-        { label: 'Native Language', value: '' },
-        { label: 'Chinese Characters', value: '' },
-        { label: 'Pinyin', value: '' }
-    ];
-    const [sides, setSides] = useState(defaultSides);
+    const [sides, setSides] = useState(theCardInfo);
 
     // Create refs for the TextInput components
     const inputRefs = useRef(sides.map(() => React.createRef()));
@@ -53,8 +51,8 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
         const epochTimeMilliseconds = Date.now();
 
-        dispatch(addCardToDeck(deckName, CardTypeEnum.CHINESE, sides, epochTimeMilliseconds));
-        setSides(defaultSides);
+        dispatch(addCardToDeck(deckName, theCardInfo.cardType, sides, epochTimeMilliseconds));
+        setSides(theCardInfo);
     };
 
     // reset the route so that user can't go back after creating a deck

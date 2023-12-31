@@ -12,7 +12,7 @@ import { CommonActions } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import { useDispatch } from 'react-redux';
 import { addDeck } from '../redux/actions';
-import { CardTypeEnum } from '../utils/constants';
+import { CardTypeEnum, getCardInfo } from '../utils/constants';
 
 function CreateDeckScreen({ navigation }) {
   const [title, setTitle] = useState('');
@@ -44,7 +44,8 @@ function CreateDeckScreen({ navigation }) {
       setShowError(true);
       return;
     }
-    dispatch(addDeck(title));
+
+    dispatch(addDeck(title, getCardInfo(cardType)));
     setTitle('');
     navigateToCreateFlashcard(title)
   };

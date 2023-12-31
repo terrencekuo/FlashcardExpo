@@ -1,4 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  CardTypeEnum,
+  SideType,
+  CardTypeToCardInfo,
+} from '../utils/constants';
 
 export const ADD_TOPIC = 'ADD_TOPIC';
 export const ADD_DECK_TO_TOPIC = 'ADD_DECK_TO_TOPIC';
@@ -48,21 +53,22 @@ export function addDeckToTopic(topicName, deckTitle) {
   };
 }
 
-export function addDeck(title) {
+export function addDeck(title, cardInfo) {
   return {
     type: ADD_DECK,
     title,
+    cardInfo: cardInfo,
   };
 }
 
-export function addCardToDeck(title, sides_type, sides, epoch_ts) {
+export function addCardToDeck(title, sidesType, sides, epochTs) {
   return {
     type: ADD_CARD,
     title,
     card: {
-      "sides_type": sides_type,
+      "sidesType": sidesType,
       "sides": sides,
-      "epoch_ts": epoch_ts
+      "epochTs": epochTs
     },
   };
 }
