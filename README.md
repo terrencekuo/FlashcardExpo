@@ -1,7 +1,25 @@
 # Readme
 
 ## how to build
-build from xcode using the ios/FlashcardExpo.xcodeproj
+build from xcode using the ios/FlashcardExpo.xcworkspace
+
+## install pods
+```bash
+➜  ios git:(main) ✗ pod install
+Using Expo modules
+[Expo] Enabling modular headers for pod ExpoModulesCore
+[Expo] Enabling modular headers for pod React-Core
+[Expo] Enabling modular headers for pod React-RCTAppDelegate
+```
+
+## install node_modules
+```bash
+➜  FlashcardExpo git:(main) ✗ npx npm ci
+npm WARN deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+npm WARN deprecated @babel/plugin-proposal-optional-catch-binding@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transf
+```
+
+
 
 ## file breakdown
 package.json

@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import CreateDeckScreen from '../screens/CreateDeckScreen';
 import CreateFlashcardScreen from '../screens/CreateFlashcardScreen';
@@ -7,7 +7,7 @@ import StudyScreen from '../screens/StudyScreen';
 import DeckInfoScreen from '../screens/DeckInfoScreen';
 import TopicSelectionScreen from '../screens/TopicSelectionScreen';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
   return (
