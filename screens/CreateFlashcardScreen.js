@@ -146,6 +146,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                             data={flashcards}
                             keyExtractor={(item, index) => `flashcard-${index}`}
                             renderItem={renderItem}
+                            scrollEnabled={false} // resolves the VirtualizedLists error
                         />
                     </View>
                 )}
