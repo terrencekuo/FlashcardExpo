@@ -19,8 +19,6 @@ npm WARN deprecated @npmcli/move-file@1.1.2: This functionality has been moved t
 npm WARN deprecated @babel/plugin-proposal-optional-catch-binding@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transf
 ```
 
-
-
 ## file breakdown
 package.json
     contains the 3rd party js libraries and dependencies
@@ -86,3 +84,7 @@ function App() {
   )
 }
 ```
+
+## Gotchus
+1. when making ios changes (swift/obj-c), you must rebuild using xcodde for those changes to be reflected on your app
+2. when using a new 3rd-party module in xcode, you must call `pod install` and look in the `Pods` dir to find out how to import the lib

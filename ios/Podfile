@@ -59,6 +59,7 @@ target 'FlashcardExpo' do
   
   pod 'GoogleMLKit/TextRecognition'
   pod 'GoogleMLKit/TextRecognitionChinese'
+  pod 'GoogleMLKit/Translate', '4.0.0'
 
   post_install do |installer|
     react_native_post_install(

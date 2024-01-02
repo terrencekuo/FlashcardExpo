@@ -21,8 +21,10 @@ import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import {
     getCardInfo,
+    CardTypeEnum,
 } from '../utils/constants';
 import ImagePickerButton from '../components/ExtractTextFromImage';
+import { TranslateLang } from '../components/TranslateLang';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName, cardType } = route.params;
@@ -30,16 +32,28 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     const theCardInfo = getCardInfo(cardType)
 
     // Default sides for the flashcard
-    const [sides, setSides] = useState(theCardInfo);
+    const [sides, setSides] = useState(theCardInfo.sideType);
 
     // Create refs for the TextInput components
     const inputRefs = useRef(sides.map(() => React.createRef()));
 
     // Handle changing the text of a side
+    // TODO: no need to call hook everytime text changes
     const handleSideChange = (text, index) => {
         const newSides = [...sides];
         newSides[index].value = text;
         setSides(newSides);
+    };
+
+    // Handle text input complete
+    const handleCompleteSideInput = (text, index) => {
+        if (theCardInfo.cardType == CardTypeEnum.CHINESE) {
+            if (index == 0) {
+                TranslateLang(text).then(output => {
+                    console.log("Translated Text:", output);
+                })
+            }
+        }
     };
 
     // Handle adding the card to the deck
@@ -52,7 +66,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         const epochTimeMilliseconds = Date.now();
 
         dispatch(addCardToDeck(deckName, theCardInfo.cardType, sides, epochTimeMilliseconds));
-        setSides(theCardInfo);
+        setSides(theCardInfo.sideType);
     };
 
     // reset the route so that user can't go back after creating a deck
@@ -109,6 +123,8 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                                 style={styles.input}
                                 value={side.value}
                                 onChangeText={(text) => handleSideChange(text, index)}
+                                onBlur={() => handleCompleteSideInput(side.value, index)} // Added onBlur event
+                                onSubmitEditing={() => handleCompleteSideInput(side.value, index)} // Added onSubmitEditing event
                                 placeholder={`Enter ${side.label}`}
                                 onSubmitEditing={() => {
                                     if (index < sides.length - 1) {

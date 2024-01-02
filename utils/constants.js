@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash';
+
 export const CardTypeEnum = {
     CHINESE: 'English <-> Chinese',
     FRENCH: 'English <-> French',
@@ -44,9 +46,8 @@ export const CardTypeToCardInfo = {
     },
 };
 
-
 export function getCardInfo(cardTypeEnum) {
-    let theCardInfo = CardTypeToCardInfo.custom;
+    let theCardInfo = cloneDeep(CardTypeToCardInfo.custom);
     for (let [key, cardInfo] of Object.entries(CardTypeToCardInfo)) {
         if (cardInfo.cardType == cardTypeEnum) {
             theCardInfo = cardInfo;
@@ -54,9 +55,5 @@ export function getCardInfo(cardTypeEnum) {
         }
     }
 
-    const copySideType = (sideType) => {
-        return sideType.map(side => ({ ...side }));
-    };
-
-    return copySideType(theCardInfo.sideType);
+    return theCardInfo
 }
