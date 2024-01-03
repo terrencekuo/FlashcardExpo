@@ -24,7 +24,11 @@ import {
     CardTypeEnum,
 } from '../utils/constants';
 import ImagePickerButton from '../components/ExtractTextFromImage';
-import { TranslateLang } from '../components/TranslateLang';
+import {
+    EnglishToHanzi,
+    EnglishToFrench,
+    EnglishToSpanish,
+} from '../components/TranslateLang';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName, cardType } = route.params;
@@ -32,7 +36,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     const theCardInfo = getCardInfo(cardType)
 
     // Default sides for the flashcard
-    const [sides, setSides] = useState(theCardInfo.sideType);
+    const [sides, setSides] = useState(getCardInfo(cardType).sideType);
 
     // Create refs for the TextInput components
     const inputRefs = useRef(sides.map(() => React.createRef()));
@@ -49,8 +53,26 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     const handleCompleteSideInput = (text, index) => {
         if (theCardInfo.cardType == CardTypeEnum.CHINESE) {
             if (index == 0) {
-                TranslateLang(text).then(output => {
-                    console.log("Translated Text:", output);
+                EnglishToHanzi(text).then(output => {
+                    const newSides = [...sides];
+                    newSides[1].value = output;
+                    setSides(newSides);
+                })
+            }
+        } else if (theCardInfo.cardType == CardTypeEnum.FRENCH) {
+            if (index == 0) {
+                EnglishToFrench(text).then(output => {
+                    const newSides = [...sides];
+                    newSides[1].value = output;
+                    setSides(newSides);
+                })
+            }
+        } else if (theCardInfo.cardType == CardTypeEnum.SPANISH) {
+            if (index == 0) {
+                EnglishToSpanish(text).then(output => {
+                    const newSides = [...sides];
+                    newSides[1].value = output;
+                    setSides(newSides);
                 })
             }
         }
@@ -66,7 +88,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
         const epochTimeMilliseconds = Date.now();
 
         dispatch(addCardToDeck(deckName, theCardInfo.cardType, sides, epochTimeMilliseconds));
-        setSides(theCardInfo.sideType);
+        setSides(getCardInfo(cardType).sideType);
     };
 
     // reset the route so that user can't go back after creating a deck
@@ -124,9 +146,9 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                                 value={side.value}
                                 onChangeText={(text) => handleSideChange(text, index)}
                                 onBlur={() => handleCompleteSideInput(side.value, index)} // Added onBlur event
-                                onSubmitEditing={() => handleCompleteSideInput(side.value, index)} // Added onSubmitEditing event
                                 placeholder={`Enter ${side.label}`}
                                 onSubmitEditing={() => {
+                                    handleCompleteSideInput(side.value, index)
                                     if (index < sides.length - 1) {
                                         inputRefs.current[index + 1].current.focus();
                                     } else {

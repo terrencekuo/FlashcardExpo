@@ -50,7 +50,7 @@ export function getCardInfo(cardTypeEnum) {
     let theCardInfo = cloneDeep(CardTypeToCardInfo.custom);
     for (let [key, cardInfo] of Object.entries(CardTypeToCardInfo)) {
         if (cardInfo.cardType == cardTypeEnum) {
-            theCardInfo = cardInfo;
+            theCardInfo = cloneDeep(cardInfo);
             break;
         }
     }

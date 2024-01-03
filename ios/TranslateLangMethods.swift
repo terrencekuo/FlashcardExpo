@@ -18,20 +18,68 @@ class TranslateLangMethods: NSObject {
     let translator = Translator.translator(options: options)
 
     let conditions = ModelDownloadConditions(
-        allowsCellularAccess: false,
-        allowsBackgroundDownloading: true
+      allowsCellularAccess: false,
+      allowsBackgroundDownloading: true
     )
 
     translator.downloadModelIfNeeded(with: conditions) { error in
-        guard error == nil else { return }
+      guard error == nil else { return }
 
-        // Model downloaded successfully. Okay to start translating.
-        translator.translate(inputText) { translatedText, error in
-          guard error == nil, let translatedText = translatedText else { return }
+      // Model downloaded successfully. Okay to start translating.
+      translator.translate(inputText) { translatedText, error in
+        guard error == nil, let translatedText = translatedText else { return }
 
-          // Translation succeeded.
-          resolver(translatedText)
-        }
+        // Translation succeeded.
+        resolver(translatedText)
+      }
+    }
+  }
+
+  @objc public func englishToFrench(_ inputText: String,
+                                    resolver: @escaping RCTPromiseResolveBlock,
+                                    rejecter: @escaping RCTPromiseRejectBlock) {
+    let options = TranslatorOptions(sourceLanguage: .english, targetLanguage: .french)
+    let translator = Translator.translator(options: options)
+
+    let conditions = ModelDownloadConditions(
+      allowsCellularAccess: false,
+      allowsBackgroundDownloading: true
+    )
+
+    translator.downloadModelIfNeeded(with: conditions) { error in
+      guard error == nil else { return }
+
+      // Model downloaded successfully. Okay to start translating.
+      translator.translate(inputText) { translatedText, error in
+        guard error == nil, let translatedText = translatedText else { return }
+
+        // Translation succeeded.
+        resolver(translatedText)
+      }
+    }
+  }
+
+  @objc public func englishToSpanish(_ inputText: String,
+                                    resolver: @escaping RCTPromiseResolveBlock,
+                                    rejecter: @escaping RCTPromiseRejectBlock) {
+    let options = TranslatorOptions(sourceLanguage: .english, targetLanguage: .spanish)
+    let translator = Translator.translator(options: options)
+
+    let conditions = ModelDownloadConditions(
+      allowsCellularAccess: false,
+      allowsBackgroundDownloading: true
+    )
+
+    translator.downloadModelIfNeeded(with: conditions) { error in
+      guard error == nil else { return }
+
+      // Model downloaded successfully. Okay to start translating.
+      translator.translate(inputText) { translatedText, error in
+        guard error == nil, let translatedText = translatedText else { return }
+
+        // Translation succeeded.
+        resolver(translatedText)
+      }
     }
   }
 
