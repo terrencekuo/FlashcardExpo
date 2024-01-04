@@ -29,6 +29,7 @@ import {
     EnglishToFrench,
     EnglishToSpanish,
 } from '../components/TranslateLang';
+import pinyin from "pinyin";
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName, cardType } = route.params;
@@ -51,11 +52,28 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
     // Handle text input complete
     const handleCompleteSideInput = (text, index) => {
+        // do not auto complete text if the input is empty
+        if (text.length == 0) return
+
         if (theCardInfo.cardType == CardTypeEnum.CHINESE) {
             if (index == 0) {
-                EnglishToHanzi(text).then(output => {
+                EnglishToHanzi(text).then(hanziOutput => {
                     const newSides = [...sides];
-                    newSides[1].value = output;
+                    newSides[1].value = hanziOutput;
+
+                    const pinyinOutput = pinyin(hanziOutput, {
+                        segment: true,
+                        group: true
+                    })
+
+                    console.log(pinyinOutput)
+                    let pinyinStr = ""
+                    for (pinyinList of pinyinOutput) {
+                        console.log("list", pinyinList)
+                        pinyinStr += pinyinList[0]
+                    }
+                    newSides[2].value = pinyinStr;
+
                     setSides(newSides);
                 })
             }
