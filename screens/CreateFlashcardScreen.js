@@ -14,11 +14,15 @@ import {
 } from 'react-native';  // Added Keyboard
 import { CommonActions } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { addCardToDeck } from '../redux/actions';
+import {
+    addCardToDeck,
+    deleteCardFromDeck,
+} from '../redux/actions';
 import { selectFlashcardsByDeck } from '../redux/selectors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector } from 'react-redux';
 import {
     getCardInfo,
@@ -40,7 +44,7 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
     // State for managing selection mode and selected flashcards
     const [inSelectionMode, setSelectionMode] = useState(false);
-    const [selectedCards, setSelectedCards] = useState([]);
+    const [selectedCardUids, setSelectedCards] = useState([]);
 
     // Default sides for the flashcard
     const [sides, setSides] = useState(getCardInfo(cardType).sideType);
@@ -156,16 +160,37 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     };
 
     const handleSelectCard = (cardId) => {
-        if (selectedCards.includes(cardId)) {
-            setSelectedCards(selectedCards.filter(id => id !== cardId));
+        if (selectedCardUids.includes(cardId)) {
+            setSelectedCards(selectedCardUids.filter(id => id !== cardId));
         } else {
-            setSelectedCards([...selectedCards, cardId]);
+            setSelectedCards([...selectedCardUids, cardId]);
         }
+    };
+
+    const Footer = () => {
+        const hasSelectedCards = selectedCardUids.length > 0;
+        if (!inSelectionMode || !hasSelectedCards) return null;
+
+        return (
+            <View style={styles.footerContainer}>
+                <TouchableOpacity onPress={handleDeleteSelectedCards}>
+                    <AntDesign name="delete" style={styles.deleteIcon} />
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    const handleDeleteSelectedCards = () => {
+        // Implement the deletion logic here
+        console.log('Selected Cards to Delete:', selectedCardUids);
+        dispatch(deleteCardFromDeck(deckName, selectedCardUids));
+        // Reset the selected cards
+        setSelectedCards([]);
     };
 
     // Render Item for FlatList
     const renderItem = ({ item }) => {
-        const isSelected = selectedCards.includes(item.uid);
+        const isSelected = selectedCardUids.includes(item.uid);
 
         return (
             <TouchableOpacity onPress={() => inSelectionMode && handleSelectCard(item.uid)} style={styles.cardItem}>
@@ -217,7 +242,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                         </View>
                     ))}
 
-                    {/* Footer buttons */}
                     <View style={styles.bottomSection}>
                         <TouchableOpacity onPress={handleAddCard} style={styles.button}>
                             <Text style={styles.buttonText}>Add Flash Card</Text>
@@ -244,7 +268,10 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                         />
                     </View>
                 )}
+
             </KeyboardAwareScrollView>
+            {/* Footer for delete action */}
+            {inSelectionMode && <Footer />}
         </View>
     );
 }
@@ -362,5 +389,19 @@ const styles = StyleSheet.create({
     editButtonText: {
         marginRight: 15,
         color: '#B89081', // Replace with your desired color
+    },
+    footerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        padding: 15,
+        backgroundColor: '#f7f7f7',
+        borderTopColor: '#ddd',
+        borderTopWidth: 1,
+        paddingBottom: Platform.OS === 'ios' ? 40 : 30,
+    },
+    deleteIcon: {
+        fontSize: 30,
+        color: '#F8485E',
     },
 });

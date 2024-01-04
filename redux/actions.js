@@ -14,6 +14,7 @@ export const DELETE_TOPIC = 'DELETE_TOPIC';
 export const INITIALIZE_DECKS = 'INITIALIZE_DECKS';
 export const RESET_STATE = 'RESET_STATE ';
 export const REMOVE_DECK_FROM_TOPIC = 'REMOVE_DECK_FROM_TOPIC';
+export const DELETE_CARD_FROM_DECK = 'DELETE_CARD_FROM_DECK';
 
 // Redux Actions
 //  an event describes something that has happened in an app
@@ -71,6 +72,14 @@ export function addCardToDeck(title, sidesType, sides, uid, epochTs) {
       "uid": uid,
       "epochTs": epochTs,
     },
+  };
+}
+
+export function deleteCardFromDeck(deckName, cardUids) {
+  return {
+    type: DELETE_CARD_FROM_DECK,
+    deckName,
+    cardUids,
   };
 }
 

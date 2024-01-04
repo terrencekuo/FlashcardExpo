@@ -7,6 +7,7 @@ import {
   DELETE_TOPIC,
   RESET_STATE,
   REMOVE_DECK_FROM_TOPIC,
+  DELETE_CARD_FROM_DECK,
 } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -144,6 +145,26 @@ function decks(state = { decks: {}, topics: {} }, action) {
           ),
         },
       };
+      break;
+
+    case DELETE_CARD_FROM_DECK:
+      const deckToUpdate = state.decks[action.deckName];
+      if (!deckToUpdate) return state
+
+      const updatedCards = deckToUpdate.cards.filter(card => !action.cardUids.includes(card.uid));
+
+      newState = {
+        ...state,
+        decks: {
+          ...state.decks,
+          [action.deckName]: {
+            ...deckToUpdate,
+            cards: updatedCards
+          }
+        }
+      };
+
+      break;
 
     default:
       return state;
