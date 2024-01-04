@@ -61,14 +61,15 @@ export function addDeck(title, cardInfo) {
   };
 }
 
-export function addCardToDeck(title, sidesType, sides, epochTs) {
+export function addCardToDeck(title, sidesType, sides, uid, epochTs) {
   return {
     type: ADD_CARD,
     title,
     card: {
       "sidesType": sidesType,
       "sides": sides,
-      "epochTs": epochTs
+      "uid": uid,
+      "epochTs": epochTs,
     },
   };
 }

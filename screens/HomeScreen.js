@@ -501,8 +501,11 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     marginRight: 15,
-    color: '#B89081', // Replace with your desired color
+    color: '#B89081',
   },
+  selectionCircleIcon: {
+    color: '#B89081',
+  }
 });
 
 export default HomeScreen;

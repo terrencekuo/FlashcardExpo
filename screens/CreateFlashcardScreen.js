@@ -18,6 +18,7 @@ import { addCardToDeck } from '../redux/actions';
 import { selectFlashcardsByDeck } from '../redux/selectors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 import {
     getCardInfo,
@@ -30,11 +31,16 @@ import {
     EnglishToSpanish,
 } from '../components/TranslateLang';
 import pinyin from "pinyin";
+import SHA256 from 'crypto-js/sha256';
 
 export default function CreateFlashcardScreen({ route, navigation }) {
     const { deckName, cardType } = route.params;
     const dispatch = useDispatch();
     const theCardInfo = getCardInfo(cardType)
+
+    // State for managing selection mode and selected flashcards
+    const [inSelectionMode, setSelectionMode] = useState(false);
+    const [selectedCards, setSelectedCards] = useState([]);
 
     // Default sides for the flashcard
     const [sides, setSides] = useState(getCardInfo(cardType).sideType);
@@ -103,9 +109,14 @@ export default function CreateFlashcardScreen({ route, navigation }) {
             return;
         }
 
+        let concatenatedSides = ""
+        for (side of sides) {
+            concatenatedSides += side.value
+        }
+        const uid = SHA256(concatenatedSides).toString();
         const epochTimeMilliseconds = Date.now();
 
-        dispatch(addCardToDeck(deckName, theCardInfo.cardType, sides, epochTimeMilliseconds));
+        dispatch(addCardToDeck(deckName, theCardInfo.cardType, sides, uid, epochTimeMilliseconds));
         setSides(getCardInfo(cardType).sideType);
     };
 
@@ -136,14 +147,42 @@ export default function CreateFlashcardScreen({ route, navigation }) {
     // Fetch the flashcards for the specific deck
     const flashcards = useSelector(state => selectFlashcardsByDeck(state, deckName));
 
+    // Selection mode for Deck flashcards
+    const toggleSelectionMode = () => {
+        setSelectionMode(!inSelectionMode);
+        if (inSelectionMode) {
+            setSelectedCards([]); // Clear selection when exiting selection mode
+        }
+    };
+
+    const handleSelectCard = (cardId) => {
+        if (selectedCards.includes(cardId)) {
+            setSelectedCards(selectedCards.filter(id => id !== cardId));
+        } else {
+            setSelectedCards([...selectedCards, cardId]);
+        }
+    };
+
     // Render Item for FlatList
-    const renderItem = ({ item }) => (
-        <View style={styles.cardItem}>
-            {item.sides.map((side, index) => (
-                <Text key={index} style={styles.cardSideText}>{side.label}: {side.value}</Text>
-            ))}
-        </View>
-    );
+    const renderItem = ({ item }) => {
+        const isSelected = selectedCards.includes(item.uid);
+
+        return (
+            <TouchableOpacity onPress={() => inSelectionMode && handleSelectCard(item.uid)} style={styles.cardItem}>
+                {inSelectionMode && (
+                    <Icon
+                        name={isSelected ? "radio-button-checked" : "radio-button-unchecked"}
+                        style={styles.selectionIcon}
+                    />
+                )}
+                <View style={styles.cardItem}>
+                    {item.sides.map((side, index) => (
+                        <Text key={index} style={styles.cardSideText}>{side.label}: {side.value}</Text>
+                    ))}
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -191,7 +230,12 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                 {/* Section to display current flashcards */}
                 {flashcards && flashcards.length > 0 && (
                     <View style={styles.flashcardsListContainer}>
-                        <Text style={styles.sideTitle}>Deck Flashcards</Text>
+                        <View style={styles.flashcardsHeader}>
+                            <Text style={styles.sideTitle}>Deck Flashcards</Text>
+                            <TouchableOpacity onPress={toggleSelectionMode} style={styles.editButton}>
+                                <Text style={styles.editButtonText}>{inSelectionMode ? 'Done' : 'Edit'}</Text>
+                            </TouchableOpacity>
+                        </View>
                         <FlatList
                             data={flashcards}
                             keyExtractor={(item, index) => `flashcard-${index}`}
@@ -288,6 +332,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
     },
+    flashcardsHeader: {
+        flexDirection: 'row', // Align items in a row
+        justifyContent: 'space-between', // Space between title and button
+        alignItems: 'center', // Align items vertically
+        marginBottom: 10,
+    },
+    selectionIcon: {
+        fontSize: 24,
+        marginRight: 10,
+        color: '#B89081', // Replace with your desired color
+    },
     cardItem: {
         padding: 10,
         borderBottomWidth: 1,
@@ -301,6 +356,10 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     doneButton: {
+        marginRight: 15,
+        color: '#B89081', // Replace with your desired color
+    },
+    editButtonText: {
         marginRight: 15,
         color: '#B89081', // Replace with your desired color
     },
