@@ -8,6 +8,7 @@ import {
   RESET_STATE,
   REMOVE_DECK_FROM_TOPIC,
   DELETE_CARD_FROM_DECK,
+  RENAME_DECK,
 } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -163,7 +164,34 @@ function decks(state = { decks: {}, topics: {} }, action) {
           }
         }
       };
+      break;
 
+    case RENAME_DECK:
+      // Copy the deck data to a new key with the new name
+      const renamedDeck = { ...state.decks[action.oldName], title: action.newName };
+
+      // Copy the decks, replacing the old deck with the new one
+      const renamedDecks = {
+        ...state.decks,
+        [action.newName]: renamedDeck,
+      };
+
+      // Remove the old deck key
+      delete renamedDecks[action.oldName];
+
+      // Create a new 'topics' object with updated deck references
+      let topics = state.topics || {}
+      const updatedTopicsForRename = Object.entries(topics).reduce((newTopics, [topic, decks]) => {
+        // Replace old deck name with new deck name if it exists in the topic
+        newTopics[topic] = decks.map(deckTitle => deckTitle === action.oldName ? action.newName : deckTitle);
+        return newTopics;
+      }, {});
+
+      newState = {
+        ...state,
+        decks: renamedDecks,
+        topics: updatedTopicsForRename,
+      };
       break;
 
     default:

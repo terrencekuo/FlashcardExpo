@@ -1,7 +1,6 @@
 import React, {
   useState,
   useEffect,
-  useLayoutEffect,
 } from 'react';
 import {
   View,
@@ -9,9 +8,6 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  Modal,
-  TextInput,
-  Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -20,7 +16,6 @@ import {
   deleteDeck,
   deleteTopic,
   resetState,
-  removeDeckFromTopic,
 } from '../redux/actions';
 import { selectDecks } from '../redux/selectors';
 import Icon from 'react-native-vector-icons/MaterialIcons';  // Import the MaterialIcons
@@ -94,6 +89,13 @@ function HomeScreen({ navigation }) {
       });
     };
 
+    const handleRenameDeck = () => {
+      navigation.navigate('RenameDeckScreen', {
+        selectedDecks, // there should only be one deck
+        backTitle: 'Flashcards'
+      });
+    };
+
     return (
       <View style={styles.footerContainer}>
         <TouchableOpacity onPress={handleDeleteSelected}>
@@ -102,6 +104,13 @@ function HomeScreen({ navigation }) {
         <TouchableOpacity onPress={handleCreateNewTopic}>
           <AntDesign name="addfolder" style={styles.addIcon} />
         </TouchableOpacity>
+        {selectedDecks.length == 1 &&
+          (
+            <TouchableOpacity onPress={handleRenameDeck}>
+              <AntDesign name="edit" style={styles.addIcon} />
+            </TouchableOpacity>
+          )
+        }
       </View>
     );
   }

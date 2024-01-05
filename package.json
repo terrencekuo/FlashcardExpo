@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "flow": "flow"
   },
   "dependencies": {
     "@babel/preset-react": "^7.23.3",
@@ -22,6 +23,7 @@
     "expo-dev-client": "~2.4.12",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
+    "flow-bin": "^0.225.1",
     "lodash": "^4.17.21",
     "pinyin": "^3.0.0-alpha.4",
     "react": "18.2.0",

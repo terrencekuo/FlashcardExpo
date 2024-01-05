@@ -6,6 +6,7 @@ import CreateFlashcardScreen from '../screens/CreateFlashcardScreen';
 import StudyScreen from '../screens/StudyScreen';
 import DeckInfoScreen from '../screens/DeckInfoScreen';
 import TopicSelectionScreen from '../screens/TopicSelectionScreen';
+import RenameDeckScreen from '../screens/RenameDeckScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -65,8 +66,15 @@ function AppNavigator() {
       <Stack.Screen
         name="TopicSelection"
         component={TopicSelectionScreen}
+        options={({ route, }) => ({
+          headerBackTitle: route.params?.backTitle || '',
+        })}
+      />
+      <Stack.Screen
+        name="RenameDeckScreen"
+        component={RenameDeckScreen}
         options={({ route, navigation }) => ({
-          headerBackTitle: route.params.backTitle,
+          headerBackTitle: route.params?.backTitle || '',
         })}
       />
     </Stack.Navigator>

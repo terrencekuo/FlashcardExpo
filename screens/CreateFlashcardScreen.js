@@ -76,10 +76,8 @@ export default function CreateFlashcardScreen({ route, navigation }) {
                         group: true
                     })
 
-                    console.log(pinyinOutput)
                     let pinyinStr = ""
                     for (pinyinList of pinyinOutput) {
-                        console.log("list", pinyinList)
                         pinyinStr += pinyinList[0]
                     }
                     newSides[2].value = pinyinStr;
@@ -182,7 +180,6 @@ export default function CreateFlashcardScreen({ route, navigation }) {
 
     const handleDeleteSelectedCards = () => {
         // Implement the deletion logic here
-        console.log('Selected Cards to Delete:', selectedCardUids);
         dispatch(deleteCardFromDeck(deckName, selectedCardUids));
         // Reset the selected cards
         setSelectedCards([]);

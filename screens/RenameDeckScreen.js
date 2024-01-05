@@ -1,3 +1,5 @@
+// @flow
+
 import React, { useState } from 'react';
 import {
     View,
@@ -10,81 +12,50 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteTopic, addTopic, addDeckToTopic } from '../redux/actions'; // Import actions
+import {
+    deleteTopic,
+    addTopic,
+    addDeckToTopic,
+    renameDeck
+} from '../redux/actions';
+import { selectDeckByName } from '../redux/selectors';
 
-function TopicSelectionScreen({ route, navigation }) {
-    const { selectedDecks, onTopicSelect } = route.params;
-    const topics = useSelector(state => state.topics || {});
+// $FlowFixMe
+function RenameDeckScreen({ route, navigation }: { route: any, navigation: any }) {
+    const { selectedDecks } = route.params;
+    const currentDeckName = selectedDecks[0];
+    const [newDeckName, setNewDeckName] = useState('');
     const dispatch = useDispatch();
-    const [newTopicName, setNewTopicName] = useState('');
-
-    const handleTopicSelect = (topicName, isNewTopic = false) => {
-        if (isNewTopic) {
-            dispatch(addTopic(topicName));
-        }
-
-        // Move selected decks to the chosen topic
-        selectedDecks.forEach(deckTitle => {
-            dispatch(addDeckToTopic(topicName, deckTitle));
-        });
-
-        // Check if any topic becomes empty after moving decks
-        const updatedTopics = { ...topics };
-        Object.keys(updatedTopics).forEach(topic => {
-            updatedTopics[topic] = updatedTopics[topic].filter(deckTitle => !selectedDecks.includes(deckTitle));
-            if (updatedTopics[topic].length === 0) {
-                // Delete empty topic
-                dispatch(deleteTopic(topic));
-            }
-        });
-
-        onTopicSelect(topicName, isNewTopic);
-        navigation.goBack();
-    };
 
     const createNewTopic = () => {
-        if (newTopicName.trim() === '') {
-            alert('Topic name cannot be empty');
+        if (newDeckName.trim() === '') {
+            alert('Deck name cannot be empty');
             return;
         }
-        handleTopicSelect(newTopicName, true);
+
+        dispatch(renameDeck(currentDeckName, newDeckName));
+        navigation.goBack();
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.customHeader}>Categorize Decks</Text>
-
-            {/* Existing Topics Section */}
-            {Object.keys(topics).length > 0 && (
-                <View style={styles.topicsBox}>
-                    <Text style={styles.boxHeader}>Move Deck to Existing Folder</Text>
-                    <FlatList
-                        data={Object.keys(topics)}
-                        keyExtractor={(item) => item}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={styles.topicItem} onPress={() => handleTopicSelect(item)}>
-                                <Text style={styles.topicText}>
-                                    <AntDesign name="folder1" style={styles.folderIcon} /> {item}
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    />
-                </View>
-            )}
+            <Text style={styles.customHeader}>Rename Decks</Text>
 
             {/* New Topic Creation Section */}
             <KeyboardAvoidingView
+                // $FlowFixMe
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.keyboardAvoidingContainer}
             >
                 <View style={styles.newTopicBox}>
-                    <Text style={styles.boxHeader}>Create New Folder</Text>
+                    <Text style={styles.boxHeader}>Rename Deck</Text>
                     <View style={styles.inputContainer}>
+                        <Text>Current deck name: {currentDeckName} </Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Enter new topic name"
-                            value={newTopicName}
-                            onChangeText={setNewTopicName}
+                            placeholder="Enter new deck name"
+                            value={newDeckName}
+                            onChangeText={setNewDeckName}
                         />
                         <TouchableOpacity onPress={createNewTopic} style={styles.customButton}>
                             <Text style={styles.customButtonText}>Create</Text>
@@ -166,9 +137,10 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
+        marginTop: 10,
         borderRadius: 5,
         paddingHorizontal: 10,
     },
 });
 
-export default TopicSelectionScreen;
+export default RenameDeckScreen;

@@ -15,6 +15,7 @@ export const INITIALIZE_DECKS = 'INITIALIZE_DECKS';
 export const RESET_STATE = 'RESET_STATE ';
 export const REMOVE_DECK_FROM_TOPIC = 'REMOVE_DECK_FROM_TOPIC';
 export const DELETE_CARD_FROM_DECK = 'DELETE_CARD_FROM_DECK';
+export const RENAME_DECK = 'RENAME_DECK';
 
 // Redux Actions
 //  an event describes something that has happened in an app
@@ -103,6 +104,15 @@ export function removeDeckFromTopic(topicName, deckTitle) {
     topicName,
     deckTitle,
   };
+}
+
+export function renameDeck(oldName, newName) {
+  return {
+    type: RENAME_DECK,
+    oldName,
+    newName,
+  };
+
 }
 
 export function resetState() {
